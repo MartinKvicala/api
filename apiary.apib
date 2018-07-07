@@ -1,0 +1,1106 @@
+FORMAT: 1A
+HOST: http://example.com/api
+
+# Klientská zóna
+
+API Blueprint klientské zóny systému Wardeneta.
+
+# Group Datové typy
+
+## Klient
+
+| Název atributu | Popis | Typ| Null |
+|-------|----------|----|---|
+|firstName|Jméno|string|Y|
+|lastName|Příjmení|string|Y|
+|phoneNo|Základní telefon|string|Y|
+|eMail|Základní email|string|Y|
+|extraOffersOn|Příznak, zda klient souhlasil s odesíláním zvláštnícj nabídek|BOOL|N|
+|lastLoginDate|Datum posledního přihlášení zákazníka do klientské zóny|date|Y|
+|createDate|Datum založeníní záznamu zákazníka|date|N|
+|birthDate|Datum narození|string|Y|
+|passwordChangeDate|Datum poslední změny hesla zákazníka|date|Y|
+|loginName|Alternativní přihlašovací jméno, pokud nevyplněno, pouižíva se eMail|string|Y|
+
+
+
+## Kontaktní adresa
+
+
+
+| Název atributu | Popis | Typ| Null |
+|-------|----------|----|---|
+|addressId|Jednoznačný identifikátor adresy|UUID|Y jen pro nově založenou adresu, jinak N|
+|addressName|Alternativní jméno, pokud nezadáno, použije se jméno zákazníka|string(64)|Y|
+|street|Ulice|string(30)|Y|
+|streetNo|ČP|string(8)|Y|
+|site|Místo|string(25)|Y|
+|postSite|Obec|string(25)|Y|
+|zipCode|PSČ|string(6)|Y|
+|country|ISO Alpha 2 kód země|string(2)|Y|
+|friendlyComposedAddress|Adresa v jednom řádku, plná forma|string|Y|
+|shortFriendlyAddress|Adresa v jednom řádku, krátká forma|string|Y|
+
+
+
+## Košík <a name="my-anchor-2"></a>
+
+
+
+| Název atributu | Popis | Typ| Null |
+|-------|----------|----|---|
+| basketId | Řetězec jednoznačně identifikující daný košík | UUID| N |
+| availableDeliveryTypes | Dostupné způsoby doručení pro aktuální košík   | Pole objektů **Způsob doručení** | Y |
+| billingAddress | Fakturační adresa, pokud se liší od fakturační či kontaktní adresy zákazníka | Adresa | Y |
+| cardId | - | - | Y |
+| confirmationUrl | URL, na kterou pošle platbení brána potvrzení o provedené platbě | VARCHAR | Y |
+| coupons | Seznam použitých dárkových/slevových kuponů | Pole objektů typu Kupón | Y |
+| createTime | Čas vytvoření kupónu  | TIME | N |
+| email | Emailová adresa pro elektronickou základní komunikaci spojenou s košíkem ( odeslání objednávky, faktury, apod.). Pokud není nastaveno jinak (viz níže) použije se i pro odeslaní elektronickéhých položek v košíku. Pokud neni uvedena, pouižije se hodnota nastavená u zákazníka. | EMAIL | Y |
+| giftMessage | Text použitý pro odeslání obdarovanému | VARCHAR | Y |
+| isGift | Příznak, zda se jedná o dárek | BOOL | N |
+| items | - | - | Y |
+| paymentInstrument | Zvolený způsob úhrady za zboží v košíku | CHAR | Y |
+| selectedDeliveryType | Zvolený způsob doručení fyzických položek v košíku, pokud tento nějaké obsahuje. | INT | Y |
+| spippingAddress | Adresa pro doručení fyzických položek v košíku, pokud tento nějaké obsahuje a pokud je zvolen způsob doručení vyžadující adresu  | Adresa nebo null | Y |
+| shippingEmail | Emailová adresa pro odeslání elektronických položek košíku, pokud je tento označen jako dárek. Pokud není uvedena, použije se nejprev hodnota y atributu email a následně hodnota pro daného zákazníka | EMAIL | Y |
+| totalDiscount | Celková sleva | LONG | N |
+| totalPrice | Celková cena | LONG | N |
+| vat |DPH | LONG | N |
+| saveAddress | Příznak, zda se májí adresní údaje zadané u košíku uložit do záznamu o zákazníkovi  | BOOL | N |
+
+
+## Kupón(dárkový)
+
+
+
+| Název atributu | Popis | Typ| Null |
+|-------|----------|----|---|
+|couponId|ID kupónu|UUID|N|
+|createTime|Datum založení kupónu|date|N|
+|expirationTime|Datum platnosti kupónu|date|N|
+|useTime|Datum uplatnění kupónu|date|Y|
+|couponValue|Hodnota kupónu|number|N|
+|serialNo|číslo kupónu|string|N|
+
+
+
+## Položka košíku
+
+
+
+| Název atributu | Popis | Typ| Null |
+|-------|----------|----|---|
+| itemId |Identifikace položky v košíku | UUID | N |
+| insertDate |čas vložení do košíku | DATE | N |
+| vat |DPH položky | LONG | N |
+| itemName |Název položky | string | Y |
+| itemDesc |Popis položky | string | N |
+| volume |Počet jednotek dané položky | INT | N |
+| price |Jednotková cena položky | LONG | N |
+| totalVat |DPH za zvolený počet jednotek dané položky  | LONG | N |
+| canChangeVolume |Příznak, yda je možné měnit počet jednotek dané položky | BOOL | N |
+| imagePath |URL k obrázku dané položky| string | Y |
+| total |Celková cena za zvolený počet jednotek dané položky | LONG | N |
+| goodsItemItemId | ID zboží pokud se jedná o typ Zboží | LONG | Y |
+| reservation | Objekt s popisem zvoleného pronájmu | objekt | Y |
+
+
+
+## Titul
+
+
+
+| Název atributu | Popis | Typ| Null |
+|-------|----------|----|---|
+|title|Označení titulu|string|N|
+|titleDesc|Popis titulu|string|N|
+|isAfterName|Příznak, zda se titul přidává za (true) nebo před(false) jméno.|BOOL|N|
+
+
+## Typ položky košíku
+
+
+
+| Typ | Význam | 
+|-------|----------|
+|goods| Zboží |
+|reservation | Pronájem |
+|charge | Dobití kreditu |
+|ecard | Vytvoření e-lístku k permanentce |
+
+
+## Způsob doručení
+
+
+
+| Název atributu | Popis | Typ |
+|-------|----------|----|
+| typeId | ID způsobu doručení | number |
+| typeDesc | Název způsobu doručení | VARCHAR(30) |
+| price | Cena daného způsobu doručení pro aktuální košík | number | 
+| isVirtual | Příznak elektronického způsobu doručení | BOOL |
+
+# Group Autentikace
+
+This API uses Basic Authentication for its authentication.
+
+The parameters that are needed to be sent for this type of authentication are as follows:
++ `username`
++ `password`
+
+## Oauth2 Token [/oauth2/token]
+
+Exchange credentials for `access_token`. Supported types:
+
++ `client_credentials`
++ [`urn:ietf:params:oauth:grant-type:jwt-bearer`](https://tools.ietf.org/html/draft-jones-oauth-jwt-bearer-03#section-6)
+
+
+### login jako zákazník [POST]
+Požadavek na vystavení nového tokenu
++ Request (application/x-www-form-urlencoded; charset=utf-8)
+
+    + Attributes (OAuth grant request)
+    + Headers
+        
+            Authorization: Basic ABCDEF
+
++ Response 200  (application/json)
+
+    + Attributes (OAuth valid response)
+
+# Group Košík
+
+## Košík [/v1/baskets]
+
+### Můj košík [GET]
+Vrátí [košík](#my-anchor-2).
++ Request
+    + Headers
+        
+            Authorization: Bearer 874887d6ecd0b106a47448c5beca1
+            Accept: application/json
+
++ Response 200 (application/json)
+        
+    + Attributes (Můj košík)
+    + Body
+
+            {"basketId":"b4a51104-15a6-4aa7-bb87-808f7f188286","items":[],"createTime":"2018-05-21T21:05:11.641+00:00","selectedDeliveryType":null,"isGift":false,"giftMessage":null,"billingAddress":null,"paymentInstrument":null,"confirmationUrl":null,"email":null,"shippingEmail":null,"shippingAddress":null,"cardId":null,"coupons":null,"saveAddress":false,"vat":0,"totalPrice":0,"availableDeliveryTypes":[],"totalDiscount":0}
+
+
+
+### Baskets By BasketId [/v1/baskets/{basketId}]
+
++ Parameters
+    + basketId: 'ABCD-...' (string, required) - ID košíku
+
+
+### Obnova košíku [PUT]
+Umožňuje synchronizovat stav košíku se serverem. 
+
++ Request (application/json)
+    + Headers
+
+            Authorization: Bearer 874887d6ecd0b106a47448c5beca1
+            Accept:application/json
+
+    + Attributes (Obnova košíkuRequest)
+
+
++ Response 200 
+
+
+
+
+## Baskets Goods By BasketId [/v1/baskets/{basketId}/goods]
+
++ Parameters
+    + basketId (string, required)
+
+
+### Přidat zboží [PUT]
+Umožňuje přidat 1 nebo více položek zboží do košíku
+
++ Request (application/json)
+    + Headers
+
+            Accept:application/json
+
+
+
+
++ Response 200 (application/json)
+    + Attributes (Přidat zboží)
+
+    + Body
+
+            {"basketId":"3b8022b3-7ead-4806-9aa1-7e059ae50a28","items":[{"goodsItemItemId":103,"itemId":"52012116-6e9d-4979-98c3-babbb9d526e3","volume":1,"insertDate":"2018-05-14T14:31:58.238+00:00","canChangeVolume":true,"imagePath":"http://127.0.0.1:8000/wardeneta/images/Goods/GoPrVoucher.png","price":100000,"itemType":"goods","itemDesc":"21 - Dárkový poukaz 1000 Kč","totalVat":0,"total":100000,"itemName":"Dárkový poukaz 1000","vat":0}],"createTime":"2018-05-14T14:31:58.109+00:00","selectedDelivery":null,"isGift":false,"giftMessage":null,"billingAddress":null,"paymentInstrument":null,"confirmationUrl":null,"email":null,"shippingEmail":null,"shippingAddress":null,"reductionCode":null,"cardId":null,"coupons":null,"availableDeliveryTypes":[],"totalPrice":100000,"vat":0}
+
+
+
+## V1 Baskets Reservations By BasketId [/v1/baskets/{basketId}/reservations]
+
++ Parameters
+    + basketId (string, required)
+
+
+### Přidat pronájem [PUT]
+Umožňuje přidat 1 nebo více položek zboží do košíku
+
++ Request (application/json)
+    + Headers
+
+            Accept:application/json
+
+
+
+
++ Response 200 (application/json)
+    + Attributes (Přidat pronájem)
+
+    + Body
+
+            {"basketId":"3b8022b3-7ead-4806-9aa1-7e059ae50a28","items":[{"reservation":{"areaId":"B762B784-2959-4725-B588-914B2C512307","establishmentId":3,"time":"2018-05-14T16:00:00+00:00","to":"2018-05-14T16:30:00+00:00"},"itemId":"9cc25f4a-16af-42f6-8531-9fb74562f4ce","volume":1,"insertDate":"2018-05-14T14:36:05.9+00:00","canChangeVolume":false,"imagePath":"http://127.0.0.1:8000/wardeneta/images/Goods/GoRent.png","price":26250,"itemType":"reservation","itemDesc":"Vířivka 14.05.2018 18:00-18:30","totalVat":0,"total":26250,"itemName":"Vířivka","vat":0}],"createTime":"2018-05-14T14:36:05.897+00:00","selectedDelivery":null,"isGift":false,"giftMessage":null,"billingAddress":null,"paymentInstrument":null,"confirmationUrl":null,"email":null,"shippingEmail":null,"shippingAddress":null,"reductionCode":null,"cardId":null,"coupons":null,"availableDeliveryTypes":[],"totalPrice":26250,"vat":0}
+
+
+
+## V1 Baskets Coupons By BasketId [/v1/baskets/{basketId}/coupons]
+
++ Parameters
+    + basketId (string, required)
+
+
+### Přidat kupón [PUT]
+Přidá ke košíku slevový kupón. Slevový kupón snižuje celkovou cenu košíku.
+
+
+
+#### Tělo zprávy
+
+
+
+| Název atributu | Popis | Typ |
+
+|-------|----------|----|
+
+| basket | Objekt **košíku** podle popisu viz [Datové typy](#datove-typy) | objekt |
+
+| coupons | Pole objektů identifikujících kupóny k přidání viz **Objekt kupón** níže  | array |
+
+
+
+#### Objekt kupón
+
+
+
+| Název atributu | Popis | Typ |
+
+|-------|----------|----|
+
+| couponId | Identifikátor kupónu  | string |
+
+
+
+#### HTTP kódy odpovědi
+
+
+
+| Kód | Význam |
+
+|:---:|----------|
+
+| 200 | OK |
+
+| 400 | Vadný obsah zprávy |
+
+| 404 | Platný kupón nenalezen |
+
+| 409 | Nesouhlas ID košíku v URL a ve zprávě |
+
+
+
+#### Odpověď
+
+
+
+Objekt **košíku** podle popisu viz [Datové typy](#datove-typy)
+
++ Request (application/json)
+    + Headers
+
+            Accept:application/json
+
+
+
+
++ Response 200 
+
+
+
+
+## V1 Baskets Items By BasketId And ItemId [/v1/baskets/{basketId}/items/{itemId}]
+
++ Parameters
+    + basketId (string, required)
+
+    + itemId (string, required)
+
+
+### Odstranit položku z košíku [DELETE]
+Umožňuje odstranit danou položku z nákupního košíku
+
++ Request (application/json)
+    + Headers
+
+            Accept:application/json
+
+
+
+
++ Response 200 
+
+
+
+
+## V1 Baskets Coupons By BasketId [/v1/baskets/{basketId}/coupons/{couponId}]
+
++ Parameters
+    + basketId (string, required)
+
+    + couponId (string, required)
+
+
+### Odstranit slevový kupón [DELETE]
+Odstraní kupón s daným ID ze seznamu slev pro daný košík.
+
+
+
+## Požadavek
+
+
+
+Zpráva obsahuje objekt **Košík** posaný v kapitole [Datové typy](#datove-typy)
+
+
+
+## Odpověď
+
+
+
+Zpráva vrací objekt **Košík** posaný v kapitole [Datové typy](#datove-typy). Seznam *coupons* již neobsahuje odstraněný kupón a změní se hodnota atributz *totalDiscount* odpovídajícím způsobem.
+
+
+
+### HTTP kódy odpovědi
+
+
+
+| Kód | Význam |
+
+| :------: |-----------------------------------|
+
+| 200 | OK |
+
+| 404 | Kupón s daným ID není přiřazen mezi slevami pro daný košík. |
+
+| 400 | ID košíku v URL neodpov9d8 ID košíku v těle zpávy. |
+
++ Request (application/json)
+    + Headers
+
+            Accept:application/json
+
+
+
+
++ Response 200 
+
+
+
++ Response 404 
+
+        WebObjects
+
+
+
+
+
+
+# Group Zákazník
+
+## V1 My Customers [/v1/my/customers]
+
+### Aktuální zákazník [GET]
+Vrátí aktuálního zákazníka
+
++ Request 
+    + Headers
+
+            Accept:application/json
+
+
+
+
++ Response 200 (application/json)
+    + Attributes (Customer1)
+
+
+
+
+# Group Zboží
+
+## V1 My Institutions Coupons By CouponId [/v1/my/institutions/coupons/{couponId}]
+
++ Parameters
+    + couponId (string, required)
+
+
+### Kupón podle ID [GET]
+TODO: Add Description
+
++ Request 
+    + Headers
+
+            Accept:application/json
+
+
+
+
++ Response 200 (application/json)
+    + Attributes (Kupón 30201105)
+
+
+
+
+# Group Pronájmy
+
+## V1 My Institutions Establishments Occupancies [/v1/my/institutions/establishments/{establishmentId}/occupancies/{occupancyDate}]
+
++ Parameters
+    + establishmentId (string, required)
+
+    + occupancyDate (string, required)
+
+
+### Obsazenost provozu [GET]
+TODO: Add Description
+
++ Request (application/json)
+    + Headers
+
+            Accept:application/json
+
+
+
+
++ Response 200 (application/json)
+    + Attributes (array[Obsazenost provozu s pronájmem])
+
+
+
+## V1 My Institutions Reservations [/v1/my/institutions/reservations/{reservationId}]
+
++ Parameters
+    + reservationId (string, required)
+
+
+### Pronájem podle ID [GET]
+Vrátí pronájem s daným ID
+
++ Request 
+    + Headers
+
+            Accept:application/json
+
+
+
+
++ Response 200 
+
+
+
+
+
+# Group Obecné
+
+## V1 My Institutions Files By FileId [/v1/my/institutions/files/{fileId}]
+
++ Parameters
+    + fileId (string, required)
+
+
+### Obsah souboru [GET]
+Vrátí obsah souboru
+
++ Request 
+    + Headers
+
+            Accept:application/octet-stream
+
+
+
+
++ Response 200 
+
+
+
+
+
+# Group GDPR
+
+## GDPR příznaky [/v1/gdpr-states]
+
+### Seznam GDPR požadavků [GET]
+TODO: Add Description
+
++ Request 
+    + Headers
+
+            Accept:application/json
+
+
+
+
++ Response 200 (application/json)
+    + Attributes (array[Seznam GDPR požadavků])
+
+    + Body
+
+            [{"stateName":"GDPR příznak 1","stateDesc":"Použití e-mailovcé adresy v aplikaci","stateId":1},{"stateName":"GDPR příznak 2","stateDesc":"Použití adresy v aplikaci","stateId":2},{"stateName":"GDPR příznak 3","stateDesc":"Použití telefonního čísla v aplikaci","stateId":3}]
+
+
+
+## Moje GDPR příznaky [/v1/my/gdpr-states]
+
+### Stav GDPR příznaků u zákazníka [GET]
+Vrací nastavení GDPR příznaků aktuálního zákazníka
+
++ Request 
+    + Headers
+
+            Accept:application/json
+
+
+
+
++ Response 200 (application/json)
+    + Attributes (array[Stav GDPR příznaků u zákazníka])
+
+    + Body
+
+            [{"state":{"stateName":"GDPR příznak 1","stateDesc":"Použití e-mailovcé adresy v aplikaci","stateId":1},"value":true},{"state":{"stateName":"GDPR příznak 2","stateDesc":"Použití adresy v aplikaci","stateId":2},"value":true},{"state":{"stateName":"GDPR příznak 3","stateDesc":"Použití telefonního čísla v aplikaci","stateId":3},"value":false}]
+
+
+### Nastavení GDPR příznaků zákazníka [POST]
+Nastaví GDPR příznaky u daného zákazníka
+
++ Request (application/json)
+    + Headers
+
+            Accept:application/json
+
+    + Attributes (Nastavení GDPR příznaků zákazníkaRequest)
+
+    + Body
+
+            [
+                {
+                    "state": {
+                        "stateName": "GDPR příznak 1",
+                        "stateDesc": "Použití e-mailovcé adresy v aplikaci",
+                        "stateId": 1
+                    },
+                    "value": true
+                },
+                {
+                    "state": {
+                        "stateName": "GDPR příznak 2",
+                        "stateDesc": "Použití adresy v aplikaci",
+                        "stateId": 2
+                    },
+                    "value": true
+                },
+                {
+                    "state": {
+                        "stateName": "GDPR příznak 3",
+                        "stateDesc": "Použití telefonního čísla v aplikaci",
+                        "stateId": 3
+                    },
+                    "value": false
+                }
+            ]
+
+
++ Response 200 (application/json)
+    + Attributes (Nastavení GDPR příznaků zákazníka)
+
+    + Body
+
+            {
+                "firstName":"Martina",
+                "lastName":"Kobylková",
+                "phoneNo":"78657574",
+                "eMail":"martin.kvicala@icloud.com",
+                "idKey":"null",
+                "extraOffersOn":false,
+                "lastLoginDate":"\"2018-07-07T09:44:52.779+00:00\"",
+                "createDate":"\"2015-11-12T12:37:46+00:00\"",
+                "birthDate":"null",
+                "passwordChangeDate":"null",
+                "friendlyComposedName":"Martina Kobylková",
+                "loginName":"null",
+                "customerName":"null",
+                "customerId":1878,
+                "totalCustomerDisplayedCredit":2194500,
+                "frontTitles":
+                    [
+                        {
+                            "title":"BcA.",
+                            "titleDesc":"bakalář umění",
+                            "isAfterName":false
+                        },
+                        {
+                            "title":"DiS.",
+                            "titleDesc":"diplomovaný specialista",
+                            "isAfterName":false
+                        }
+                    ],
+                "afterTitles":
+                    [
+                        {
+                            "title":"CSc.",
+                            "titleDesc":"kandidát věd",
+                            "isAfterName":true
+                        },
+                        {
+                            "title":"Dr.h.c.",
+                            "titleDesc":"čestný doktor",
+                            "isAfterName":true
+                        }
+                    ],
+                "status":true,
+                "contactAddress":
+                    {
+                        "addressId":"50f20881-8c70-42bd-9263-da0c9125a58c",
+                        "street":"Nová",
+                        "streetNo":"124556",
+                        "zipCode":"11111",
+                        "site":"null",
+                        "postSite":"Městecko",
+                        "addressName":"null",
+                        "country":"SK",
+                        "friendlyComposedAddress":"Nová 124556, 11111 Městecko, CZE",
+                        "shortFriendlyAddress":"Nová 124556, Městecko"
+                    },
+                "invoiceAddress":
+                    {
+                        "addressId":"767c2c52-8779-4d0a-8192-ec8ee3d8209e",
+                        "street":"ulicka",
+                        "streetNo":"2",
+                        "zipCode":"67890",
+                        "site":"null",
+                        "postSite":"Místo",
+                        "addressName":"null",
+                        "country":"SK",
+                        "friendlyComposedAddress":"ulicka 2, 67890 Místo, CZE",
+                        "shortFriendlyAddress":"ulicka 2, Místo"
+                        },
+                    "isTestCustomer":true,
+                    "workingPhoneNo":"78657574",
+                    "privatePhoneNo":"6855675756",
+                    "workingEMail":"martin.kvicala@icloud.com",
+                    "privateEMail":"martin.kvicala@icloud.com",
+                    "countryId":"null",
+                    "allowsToUseCustomerApp":true
+                }
+
+
+
+# Group Registrace
+
+## Registrace [/api/v1/customer-registrations]
+
+### Založení nové registrace [POST]
+
+Založí záznam o registraci nového zákazníka
+
++ Request (application/json)
+    + Headers
+
+            Accept:application/json
+            
+    + Attributes
+    
++ Response 200 (application/json)
+
+# Data Structures
+
+## OAuth grant request (object)
+
++ `grant_type`: `client_credentials` (string, required)
++ scope: `customer-access` (string, required)
+
+## OAuth valid response (object)
+
++ `access_token`: `eyJhbGciOiJIUzI1NiJ9.e30.XmNK3GpH3Ys_7wsYBfq4C3M6goz71I7dTgUkuIa5lyQ` (string, required) - valid token
++ `refresh_token`: `eyJhbGciOiJIUzI1NiJ9.e30.XmNK3GpH3Ys_7wsYBfq4C3M6goz71I7dTgUkuIa5lyQ` (string, required) - refresh token
++ `expires_in`: 300 (number, required)
++ `token_type`: Bearer (string, required)
+
+## Customer1 (object)
++ firstName: `John` (string, required) - Jméno
++ lastName: `Doe (string, required) - Příjmení
++ phoneNo: `John` (string, required) - Základní telefon
++ eMail: `John` (string, required) - Základní email
++ extraOffersOn: false (boolean) - Příznak, zda klient souhlasil s odesíláním zvláštních nabídek
++ lastLoginDate: `John` (string) - Datum posledního přihlášení zákazníka do klientské zóny
++ createDate: `John` (string) - Datum založeníní záznamu zákazníka
++ birthDate: `John` (string, required) - Datum narození
++ passwordChangeDate: `John` (string, required) - Datum poslední změny hesla zákazníka
++ loginName: `John` (string, required) - Alternativní přihlašovací jméno, pokud nevyplněno, pouižíva se eMail
+
+## Můj košík (object)
+
+
+### Properties
++ `basketId`: `b4a51104-15a6-4aa7-bb87-808f7f188286` (string, required) 
++ `items`: `[]` (array[string], required) 
++ `createTime`: `5/21/2018 9:05:11 PM` (string, required) 
++ `selectedDeliveryType` (string, required, nullable) 
++ `isGift`: `false` (boolean, required) 
++ `giftMessage` (string, required, nullable) 
++ `billingAddress` (string, required, nullable) 
++ `paymentInstrument` (string, required, nullable) 
++ `confirmationUrl` (string, required, nullable) 
++ `email` (string, required, nullable) 
++ `shippingEmail` (string, required, nullable) 
++ `shippingAddress` (string, required, nullable) 
++ `cardId` (string, required, nullable) 
++ `coupons` (string, required, nullable) 
++ `saveAddress`: `false` (boolean, required) 
++ `vat`: `0` (number, required) 
++ `totalPrice`: `0` (number, required) 
++ `availableDeliveryTypes`: `[]` (array[string], required) 
++ `totalDiscount`: `0` (number, required) 
+
+
+## Obnova košíkuRequest (object)
+
+
+### Properties
++ `availableDeliveryTypes`: `{}` (object, required) 
++ `basketId`: `{{basketId}}` (string, required) 
++ `billingAddress` (string, required, nullable) 
++ `cardId` (string, required, nullable) 
++ `confirmationUrl` (string, required, nullable) 
++ `coupons` (string, required, nullable) 
++ `createTime`: `5/20/2018 8:19:58 AM` (string, required) 
++ `email` (string, required, nullable) 
++ `giftMessage` (string, required, nullable) 
++ `isGift`: `false` (boolean, required) 
++ `items`: `false` (array[Item], required) 
++ `paymentInstrument` (string, required, nullable) 
++ `reductionCode` (string, required, nullable) 
++ `reductionCodes`: `{}` (object, required) 
++ `selectedDeliveryType` (string, required, nullable) 
++ `shippingAddress` (string, required, nullable) 
++ `shippingEmail` (string, required, nullable) 
++ `totalPrice`: `200000` (number, required) 
++ `vat`: `0` (number, required) 
+
+
+## Item (object)
+
+
+### Properties
++ `canChangeVolume`: `true` (boolean, required) 
++ `goodsItemItemId`: `108` (number, required) 
++ `imagePath`: `http://127.0.0.1:8000/wardeneta/images/Goods/GoPrVoucher.png` (string, required) 
++ `insertDate`: `5/20/2018 8:20:07 AM` (string, required) 
++ `itemDesc`: `22 - Dárkový poukaz 2000 Kč nabití` (string, required) 
++ `itemId`: `37a27a72-3180-49e2-8c4d-75137cdd18a6` (string, required) 
++ `itemName`: `Dárkový poukaz 2000N` (string, required) 
++ `itemType`: `goods` (string, required) 
++ `price`: `200000` (number, required) 
++ `total`: `200000` (number, required) 
++ `totalVat`: `0` (number, required) 
++ `vat`: `0` (number, required) 
++ `volume`: `2` (number, required) 
+
+
+## Přidat zboží (object)
+
+
+### Properties
++ `basketId`: `3b8022b3-7ead-4806-9aa1-7e059ae50a28` (string, required) 
++ `items`: `3b8022b3-7ead-4806-9aa1-7e059ae50a28` (array[Item], required) 
++ `createTime`: `5/14/2018 2:31:58 PM` (string, required) 
++ `selectedDelivery` (string, required, nullable) 
++ `isGift`: `false` (boolean, required) 
++ `giftMessage` (string, required, nullable) 
++ `billingAddress` (string, required, nullable) 
++ `paymentInstrument` (string, required, nullable) 
++ `confirmationUrl` (string, required, nullable) 
++ `email` (string, required, nullable) 
++ `shippingEmail` (string, required, nullable) 
++ `shippingAddress` (string, required, nullable) 
++ `reductionCode` (string, required, nullable) 
++ `cardId` (string, required, nullable) 
++ `coupons` (string, required, nullable) 
++ `availableDeliveryTypes`: `[]` (array[string], required) 
++ `totalPrice`: `100000` (number, required) 
++ `vat`: `0` (number, required) 
+
+
+## Přidat pronájem (object)
+
+
+### Properties
++ `basketId`: `3b8022b3-7ead-4806-9aa1-7e059ae50a28` (string, required) 
++ `items`: `3b8022b3-7ead-4806-9aa1-7e059ae50a28` (array[Item6], required) 
++ `createTime`: `5/14/2018 2:36:05 PM` (string, required) 
++ `selectedDelivery` (string, required, nullable) 
++ `isGift`: `false` (boolean, required) 
++ `giftMessage` (string, required, nullable) 
++ `billingAddress` (string, required, nullable) 
++ `paymentInstrument` (string, required, nullable) 
++ `confirmationUrl` (string, required, nullable) 
++ `email` (string, required, nullable) 
++ `shippingEmail` (string, required, nullable) 
++ `shippingAddress` (string, required, nullable) 
++ `reductionCode` (string, required, nullable) 
++ `cardId` (string, required, nullable) 
++ `coupons` (string, required, nullable) 
++ `availableDeliveryTypes`: `[]` (array[string], required) 
++ `totalPrice`: `26250` (number, required) 
++ `vat`: `0` (number, required) 
+
+
+## Item6 (object)
+
+
+### Properties
++ `reservation` (Reservation, required) 
++ `itemId`: `9cc25f4a-16af-42f6-8531-9fb74562f4ce` (string, required) 
++ `volume`: `1` (number, required) 
++ `insertDate`: `5/14/2018 2:36:05 PM` (string, required) 
++ `canChangeVolume`: `false` (boolean, required) 
++ `imagePath`: `http://127.0.0.1:8000/wardeneta/images/Goods/GoRent.png` (string, required) 
++ `price`: `26250` (number, required) 
++ `itemType`: `reservation` (string, required) 
++ `itemDesc`: `Vířivka 14.05.2018 18:00-18:30` (string, required) 
++ `totalVat`: `0` (number, required) 
++ `total`: `26250` (number, required) 
++ `itemName`: `Vířivka` (string, required) 
++ `vat`: `0` (number, required) 
+
+
+## Reservation (object)
+
+
+### Properties
++ `areaId`: `B762B784-2959-4725-B588-914B2C512307` (string, required) 
++ `establishmentId`: `3` (number, required) 
++ `time`: `5/14/2018 4:00:00 PM` (string, required) 
++ `to`: `5/14/2018 4:30:00 PM` (string, required) 
+
+
+## Kupón 30201105 (object)
+
+
+### Properties
++ `goodsItem` (GoodsItem, required) 
++ `createTime`: `5/22/2018 12:12:43 PM` (string, required) 
++ `expirationTime`: `8/20/2018 12:12:43 PM` (string, required) 
++ `useTime` (string, required, nullable) 
++ `couponId`: `bfb1e980-b796-4023-adea-292ad92d8bd2` (string, required) 
++ `transactions`: `[]` (array[string], required) 
++ `extraEmail` (string, required, nullable) 
++ `couponValue` (string, required, nullable) 
++ `serialNo`: `30201105` (string, required) 
++ `customer`: `30201105` (Customer, required) 
+
+
+## GoodsItem (object)
+
+
+### Properties
++ `$type`: `wagoods-items` (string, required) 
++ `$id`: `107` (number, required) 
++ `defaultPrice`: `100000` (number, required) 
++ `itemId`: `107` (number, required) 
++ `itemName`: `Dárkový poukaz 1000N` (string, required) 
++ `wareMinLevel`: `0` (number, required) 
++ `isRentable`: `false` (boolean, required) 
++ `state`: `true` (boolean, required) 
++ `itemDesc`: `22 - Dárkový poukaz 1000 Kč nabití` (string, required) 
++ `earningLevel`: `0` (number, required) 
++ `barCode`: `23000000030400` (string, required) 
+
+
+## Customer (object)
+
+
+### Properties
++ `$type`: `wacustomers` (string, required) 
++ `$id`: `1878` (number, required) 
++ `passwordChangeDate` (string, required, nullable) 
++ `lastName`: `Kobylková` (string, required) 
++ `testFlag`: `N` (string, required) 
++ `lastLoginDate`: `5/24/2018 2:47:37 PM` (string, required) 
++ `birthDate` (string, required, nullable) 
++ `countryId` (string, required, nullable) 
++ `customerName` (string, required, nullable) 
++ `firstName`: `Martina` (string, required) 
++ `bankId`: `21331d36-92fc-11e5-832a-b14855d11b12` (string, required) 
++ `idKey` (string, required, nullable) 
++ `sexCode` (string, required, nullable) 
++ `loginName` (string, required, nullable) 
++ `customerId`: `1878` (number, required) 
++ `position` (string, required, nullable) 
++ `createDate`: `11/12/2015 1:37:46 PM` (string, required) 
++ `status`: `true` (boolean, required) 
+
+
+## Obsazenost provozu s pronájmem (object)
+
+
+### Properties
++ `areaId`: `0001E2BB-9A59-483A-AB9F-CB2B070B8F66` (string, required) 
++ `establishmentId`: `3` (number, required) 
++ `areaName`: `Dráha 1` (string, required) 
++ `minimalReservationPeriod`: `30` (number, required) 
++ `activities`: `30` (array[Activity], required) 
+
+
+## Activity (object)
+
+
+### Properties
++ `validFrom`: `6/2/2018 10:00:00 PM` (string, required) 
++ `validTo`: `6/3/2018 4:30:00 AM` (string, required) 
++ `isReservable`: `false` (boolean, required) 
++ `isReserved`: `false` (boolean, required) 
++ `isClosed`: `true` (boolean, required) 
++ `isCustomerReservable`: `false` (boolean, required) 
++ `reservation` (string, required, nullable) 
++ `price`: `19000` (number, required) 
+
+
+## Seznam GDPR požadavků (object)
+
+
+### Properties
++ `stateName`: `GDPR příznak 1` (string, required) 
++ `stateDesc`: `Použití e-mailovcé adresy v aplikaci` (string, required) 
++ `stateId`: `1` (number, required) 
+
+
+## Stav GDPR příznaků u zákazníka (object)
+
+
+### Properties
++ `state` (State, required) 
++ `value`: `true` (boolean, required) 
+
+
+## State (object)
+
+
+### Properties
++ `stateName`: `GDPR příznak 1` (string, required) 
++ `stateDesc`: `Použití e-mailovcé adresy v aplikaci` (string, required) 
++ `stateId`: `1` (number, required) 
+
+
+## Nastavení GDPR příznaků zákazníkaRequest (object)
+
+
+### Properties
++ `state` (State, required) 
++ `value`: `true` (boolean, required) 
+
+
+## Nastavení GDPR příznaků zákazníka (object)
+
+
+### Properties
++ `firstName`: `Martina` (string, required) 
++ `lastName`: `Kobylková` (string, required) 
++ `phoneNo`: `78657574` (string, required) 
++ `eMail`: `martin.kvicala@icloud.com` (string, required) 
++ `idKey` (string, required, nullable) 
++ `extraOffersOn`: `false` (boolean, required) 
++ `lastLoginDate`: `7/7/2018 9:44:52 AM` (string, required) 
++ `createDate`: `11/12/2015 12:37:46 PM` (string, required) 
++ `birthDate` (string, required, nullable) 
++ `passwordChangeDate` (string, required, nullable) 
++ `friendlyComposedName`: `Martina Kobylková` (string, required) 
++ `loginName` (string, required, nullable) 
++ `customerName` (string, required, nullable) 
++ `customerId`: `1878` (number, required) 
++ `totalCustomerDisplayedCredit`: `2194500` (number, required) 
++ `frontTitles`: `2194500` (array[FrontTitle], required) 
++ `afterTitles`: `2194500` (array[AfterTitle], required) 
++ `status`: `true` (boolean, required) 
++ `contactAddress`: `true` (ContactAddress, required) 
++ `invoiceAddress`: `true` (InvoiceAddress, required) 
++ `isTestCustomer`: `true` (boolean, required) 
++ `workingPhoneNo`: `78657574` (string, required) 
++ `privatePhoneNo`: `6855675756` (string, required) 
++ `workingEMail`: `martin.kvicala@icloud.com` (string, required) 
++ `privateEMail`: `martin.kvicala@icloud.com` (string, required) 
++ `countryId` (string, required, nullable) 
++ `allowsToUseCustomerApp`: `true` (boolean, required) 
+
+
+## FrontTitle (object)
+
+
+### Properties
++ `title`: `BcA.` (string, required) 
++ `titleDesc`: `bakalář umění` (string, required) 
++ `isAfterName`: `false` (boolean, required) 
+
+
+## AfterTitle (object)
+
+
+### Properties
++ `title`: `CSc.` (string, required) 
++ `titleDesc`: `kandidát věd` (string, required) 
++ `isAfterName`: `true` (boolean, required) 
+
+
+## ContactAddress (object)
+
+
+### Properties
++ `addressId`: `50f20881-8c70-42bd-9263-da0c9125a58c` (string, required) 
++ `street`: `Nová` (string, required) 
++ `streetNo`: `124556` (string, required) 
++ `zipCode`: `11111` (string, required) 
++ `site` (string, required, nullable) 
++ `postSite`: `Městecko` (string, required) 
++ `addressName` (string, required, nullable) 
++ `country`: `SK` (string, required) 
++ `friendlyComposedAddress`: `Nová 124556, 11111 Městecko, CZE` (string, required) 
++ `shortFriendlyAddress`: `Nová 124556, Městecko` (string, required) 
+
+
+## InvoiceAddress (object)
+
+
+### Properties
++ `addressId`: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) 
++ `street`: `ulicka` (string, required) 
++ `streetNo`: `2` (string, required) 
++ `zipCode`: `67890` (string, required) 
++ `site` (string, required, nullable) 
++ `postSite`: `Místo` (string, required) 
++ `addressName` (string, required, nullable) 
++ `country`: `SK` (string, required) 
++ `friendlyComposedAddress`: `ulicka 2, 67890 Místo, CZE` (string, required) 
++ `shortFriendlyAddress`: `ulicka 2, Místo` (string, required)
