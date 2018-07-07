@@ -191,16 +191,17 @@ Vrátí [košík](#my-anchor-2).
 
 
 
-### Baskets By BasketId [/v1/baskets/{basketId}]
+### Košík dle ID [/v1/baskets/{basketId}]
 
 + Parameters
     + basketId: 'ABCD-...' (string, required) - ID košíku
 
 
-### Obnova košíku [PUT]
-Umožňuje synchronizovat stav košíku se serverem. 
+### Obnovit košík [PUT]
+Umožňuje synchronizovat stav a obsah košíku se serverem. 
 
 + Request (application/json)
+
     + Headers
 
             Authorization: Bearer 874887d6ecd0b106a47448c5beca1
@@ -208,10 +209,9 @@ Umožňuje synchronizovat stav košíku se serverem.
 
     + Attributes (Obnova košíkuRequest)
 
-
 + Response 200 
 
-
+    + Attributes (Můj košík)
 
 
 ## Baskets Goods By BasketId [/v1/baskets/{basketId}/goods]
