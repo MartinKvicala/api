@@ -333,18 +333,16 @@ Objekt **košíku** podle popisu viz [Datové typy](#datove-typy)
             Accept:application/json
 
 
-
-
 + Response 200 
 
 
 
 
-## V1 Baskets Items By BasketId And ItemId [/v1/baskets/{basketId}/items/{itemId}]
+## Baskets Items By BasketId And ItemId [/v1/baskets/{basketId}/items/{itemId}]
 
 + Parameters
-    + basketId (string, required)
 
+    + basketId (string, required)
     + itemId (string, required)
 
 
@@ -364,69 +362,33 @@ Umožňuje odstranit danou položku z nákupního košíku
 
 
 
-## V1 Baskets Coupons By BasketId [/v1/baskets/{basketId}/coupons/{couponId}]
+## Baskets Coupons By BasketId [/v1/baskets/{basketId}/coupons/{couponId}]
 
 + Parameters
-    + basketId (string, required)
 
+    + basketId (string, required)
     + couponId (string, required)
 
 
 ### Odstranit slevový kupón [DELETE]
 Odstraní kupón s daným ID ze seznamu slev pro daný košík.
 
-
-
-## Požadavek
-
-
-
-Zpráva obsahuje objekt **Košík** posaný v kapitole [Datové typy](#datove-typy)
-
-
-
-## Odpověď
-
-
-
-Zpráva vrací objekt **Košík** posaný v kapitole [Datové typy](#datove-typy). Seznam *coupons* již neobsahuje odstraněný kupón a změní se hodnota atributz *totalDiscount* odpovídajícím způsobem.
-
-
-
-### HTTP kódy odpovědi
-
-
-
-| Kód | Význam |
-
-| :------: |-----------------------------------|
-
-| 200 | OK |
-
-| 404 | Kupón s daným ID není přiřazen mezi slevami pro daný košík. |
-
-| 400 | ID košíku v URL neodpov9d8 ID košíku v těle zpávy. |
-
 + Request (application/json)
-    + Headers
 
-            Accept:application/json
-
+    + Attributes (Můj košík)
 
 
++ Response 200 (application/json)
 
-+ Response 200 
+    + Attributes (Můj košík)
 
++ Response 404
 
+        Kupón s daným ID není přiřazen mezi slevami pro daný košík
 
-+ Response 404 
++ Response 400
 
-        WebObjects
-
-
-
-
-
+        ID košíku v URL neodpov9d8 ID košíku v těle zpávy
 
 # Group Zákazník
 
@@ -451,11 +413,11 @@ Vrátí aktuálního zákazníka
 
 # Group Zboží
 
-## V1 My Institutions Coupons By CouponId [/v1/my/institutions/coupons/{couponId}]
+## My Institutions Coupons By CouponId [/v1/my/institutions/coupons/{couponId}]
 
 + Parameters
-    + couponId (string, required)
 
+    + couponId (string, required)
 
 ### Kupón podle ID [GET]
 TODO: Add Description
@@ -469,6 +431,7 @@ TODO: Add Description
 
 
 + Response 200 (application/json)
+
     + Attributes (Kupón 30201105)
 
 
