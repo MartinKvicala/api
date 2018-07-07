@@ -681,11 +681,11 @@ Nastaví GDPR příznaky u daného zákazníka
 
 
 
-# Group Registrace
+# Group Zákaznická registrace
 
 ## Registrace [/api/v1/customer-registrations]
 
-### Založení nové registrace [POST]
+### Nová registrace [POST]
 
 Založí záznam o registraci nového zákazníka
 
@@ -698,6 +698,19 @@ Založí záznam o registraci nového zákazníka
     
 + Response 200 (application/json)
 
+### Seznam registrací [GET]
+
++ Request (application/json)
+    + Headers
+
+            Accept:application/json
+            Authorization: Bearer xhhgj...
+           
++ Response 200 (application/json)
+ 
+    + Attributes (array)
+        - (RegistrationResponse)
+        
 # Data Structures
 
 ## OAuth grant request (object)
@@ -1067,3 +1080,8 @@ Založí záznam o registraci nového zákazníka
 + `country`: `SK` (string, required) 
 + `friendlyComposedAddress`: `ulicka 2, 67890 Místo, CZE` (string, required) 
 + `shortFriendlyAddress`: `ulicka 2, Místo` (string, required)
+
+## RegistrationResponse (object)
+
+### Properties
++ registrationId: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) - Unikátní ID registrace
