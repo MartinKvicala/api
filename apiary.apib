@@ -5,142 +5,6 @@ HOST: http://example.com/api
 
 API Blueprint klientské zóny systému Wardeneta.
 
-# Group Datové typy
-
-## Klient
-
-| Název atributu | Popis | Typ| Null |
-|-------|----------|----|---|
-|firstName|Jméno|string|Y|
-|lastName|Příjmení|string|Y|
-|phoneNo|Základní telefon|string|Y|
-|eMail|Základní email|string|Y|
-|extraOffersOn|Příznak, zda klient souhlasil s odesíláním zvláštnícj nabídek|BOOL|N|
-|lastLoginDate|Datum posledního přihlášení zákazníka do klientské zóny|date|Y|
-|createDate|Datum založeníní záznamu zákazníka|date|N|
-|birthDate|Datum narození|string|Y|
-|passwordChangeDate|Datum poslední změny hesla zákazníka|date|Y|
-|loginName|Alternativní přihlašovací jméno, pokud nevyplněno, pouižíva se eMail|string|Y|
-
-
-
-## Kontaktní adresa
-
-
-
-| Název atributu | Popis | Typ| Null |
-|-------|----------|----|---|
-|addressId|Jednoznačný identifikátor adresy|UUID|Y jen pro nově založenou adresu, jinak N|
-|addressName|Alternativní jméno, pokud nezadáno, použije se jméno zákazníka|string(64)|Y|
-|street|Ulice|string(30)|Y|
-|streetNo|ČP|string(8)|Y|
-|site|Místo|string(25)|Y|
-|postSite|Obec|string(25)|Y|
-|zipCode|PSČ|string(6)|Y|
-|country|ISO Alpha 2 kód země|string(2)|Y|
-|friendlyComposedAddress|Adresa v jednom řádku, plná forma|string|Y|
-|shortFriendlyAddress|Adresa v jednom řádku, krátká forma|string|Y|
-
-
-
-## Košík <a name="my-anchor-2"></a>
-
-
-
-| Název atributu | Popis | Typ| Null |
-|-------|----------|----|---|
-| basketId | Řetězec jednoznačně identifikující daný košík | UUID| N |
-| availableDeliveryTypes | Dostupné způsoby doručení pro aktuální košík   | Pole objektů **Způsob doručení** | Y |
-| billingAddress | Fakturační adresa, pokud se liší od fakturační či kontaktní adresy zákazníka | Adresa | Y |
-| cardId | - | - | Y |
-| confirmationUrl | URL, na kterou pošle platbení brána potvrzení o provedené platbě | VARCHAR | Y |
-| coupons | Seznam použitých dárkových/slevových kuponů | Pole objektů typu Kupón | Y |
-| createTime | Čas vytvoření kupónu  | TIME | N |
-| email | Emailová adresa pro elektronickou základní komunikaci spojenou s košíkem ( odeslání objednávky, faktury, apod.). Pokud není nastaveno jinak (viz níže) použije se i pro odeslaní elektronickéhých položek v košíku. Pokud neni uvedena, pouižije se hodnota nastavená u zákazníka. | EMAIL | Y |
-| giftMessage | Text použitý pro odeslání obdarovanému | VARCHAR | Y |
-| isGift | Příznak, zda se jedná o dárek | BOOL | N |
-| items | - | - | Y |
-| paymentInstrument | Zvolený způsob úhrady za zboží v košíku | CHAR | Y |
-| selectedDeliveryType | Zvolený způsob doručení fyzických položek v košíku, pokud tento nějaké obsahuje. | INT | Y |
-| spippingAddress | Adresa pro doručení fyzických položek v košíku, pokud tento nějaké obsahuje a pokud je zvolen způsob doručení vyžadující adresu  | Adresa nebo null | Y |
-| shippingEmail | Emailová adresa pro odeslání elektronických položek košíku, pokud je tento označen jako dárek. Pokud není uvedena, použije se nejprev hodnota y atributu email a následně hodnota pro daného zákazníka | EMAIL | Y |
-| totalDiscount | Celková sleva | LONG | N |
-| totalPrice | Celková cena | LONG | N |
-| vat |DPH | LONG | N |
-| saveAddress | Příznak, zda se májí adresní údaje zadané u košíku uložit do záznamu o zákazníkovi  | BOOL | N |
-
-
-## Kupón(dárkový)
-
-
-
-| Název atributu | Popis | Typ| Null |
-|-------|----------|----|---|
-|couponId|ID kupónu|UUID|N|
-|createTime|Datum založení kupónu|date|N|
-|expirationTime|Datum platnosti kupónu|date|N|
-|useTime|Datum uplatnění kupónu|date|Y|
-|couponValue|Hodnota kupónu|number|N|
-|serialNo|číslo kupónu|string|N|
-
-
-
-## Položka košíku
-
-
-
-| Název atributu | Popis | Typ| Null |
-|-------|----------|----|---|
-| itemId |Identifikace položky v košíku | UUID | N |
-| insertDate |čas vložení do košíku | DATE | N |
-| vat |DPH položky | LONG | N |
-| itemName |Název položky | string | Y |
-| itemDesc |Popis položky | string | N |
-| volume |Počet jednotek dané položky | INT | N |
-| price |Jednotková cena položky | LONG | N |
-| totalVat |DPH za zvolený počet jednotek dané položky  | LONG | N |
-| canChangeVolume |Příznak, yda je možné měnit počet jednotek dané položky | BOOL | N |
-| imagePath |URL k obrázku dané položky| string | Y |
-| total |Celková cena za zvolený počet jednotek dané položky | LONG | N |
-| goodsItemItemId | ID zboží pokud se jedná o typ Zboží | LONG | Y |
-| reservation | Objekt s popisem zvoleného pronájmu | objekt | Y |
-
-
-
-## Titul
-
-
-
-| Název atributu | Popis | Typ| Null |
-|-------|----------|----|---|
-|title|Označení titulu|string|N|
-|titleDesc|Popis titulu|string|N|
-|isAfterName|Příznak, zda se titul přidává za (true) nebo před(false) jméno.|BOOL|N|
-
-
-## Typ položky košíku
-
-
-
-| Typ | Význam | 
-|-------|----------|
-|goods| Zboží |
-|reservation | Pronájem |
-|charge | Dobití kreditu |
-|ecard | Vytvoření e-lístku k permanentce |
-
-
-## Způsob doručení
-
-
-
-| Název atributu | Popis | Typ |
-|-------|----------|----|
-| typeId | ID způsobu doručení | number |
-| typeDesc | Název způsobu doručení | VARCHAR(30) |
-| price | Cena daného způsobu doručení pro aktuální košík | number | 
-| isVirtual | Příznak elektronického způsobu doručení | BOOL |
-
 # Group Autentikace
 
 This API uses Basic Authentication for its authentication.
@@ -170,13 +34,19 @@ Požadavek na vystavení nového tokenu
 
     + Attributes (OAuth valid response)
 
-# Group Košík
+# Group Nákupní košík
 
-## Košík [/v1/baskets]
+## Správa nakupního košíku [/v1/baskets]
+
+Nákupní košík uchovává aktuální stav prováděného nákuu v e-shopu. 
+
 
 ### Můj košík [GET]
-Vrátí [košík](#my-anchor-2).
+
+Vrátí nakupní košík aktuálního zákazníka (dle autentikačního tokenu).
+
 + Request
+
     + Headers
         
             Authorization: Bearer 874887d6ecd0b106a47448c5beca1
@@ -185,10 +55,6 @@ Vrátí [košík](#my-anchor-2).
 + Response 200 (application/json)
         
     + Attributes (Můj košík)
-    + Body
-
-            {"basketId":"b4a51104-15a6-4aa7-bb87-808f7f188286","items":[],"createTime":"2018-05-21T21:05:11.641+00:00","selectedDeliveryType":null,"isGift":false,"giftMessage":null,"billingAddress":null,"paymentInstrument":null,"confirmationUrl":null,"email":null,"shippingEmail":null,"shippingAddress":null,"cardId":null,"coupons":null,"saveAddress":false,"vat":0,"totalPrice":0,"availableDeliveryTypes":[],"totalDiscount":0}
-
 
 
 ### Košík dle ID [/v1/baskets/{basketId}]
@@ -701,9 +567,10 @@ Založí záznam o registraci nového zákazníka
 ### Seznam registrací [GET]
 
 + Request (application/json)
+    
     + Headers
 
-            Accept:application/json
+            Accept: application/json
             Authorization: Bearer xhhgj...
            
 + Response 200 (application/json)
@@ -726,16 +593,18 @@ Založí záznam o registraci nového zákazníka
 + `token_type`: Bearer (string, required)
 
 ## Customer1 (object)
+
+### Properties
 + firstName: `John` (string, required) - Jméno
 + lastName: `Doe (string, required) - Příjmení
-+ phoneNo: `John` (string, required) - Základní telefon
-+ eMail: `John` (string, required) - Základní email
++ phoneNo: `+420666123456` (string, required) - Základní telefon
++ eMail: `John.Doe@mail.com` (string, required) - Základní email
 + extraOffersOn: false (boolean) - Příznak, zda klient souhlasil s odesíláním zvláštních nabídek
-+ lastLoginDate: `John` (string) - Datum posledního přihlášení zákazníka do klientské zóny
-+ createDate: `John` (string) - Datum založeníní záznamu zákazníka
-+ birthDate: `John` (string, required) - Datum narození
-+ passwordChangeDate: `John` (string, required) - Datum poslední změny hesla zákazníka
-+ loginName: `John` (string, required) - Alternativní přihlašovací jméno, pokud nevyplněno, pouižíva se eMail
++ lastLoginDate: `2015-08-05T08:40:51.620` (string) - Datum posledního přihlášení zákazníka do klientské zóny
++ createDate: `2015-08-05T08:40:51.620` (string) - Datum založeníní záznamu zákazníka
++ birthDate: 19600105 (number) - Datum narození
++ passwordChangeDate: `2015-08-05T08:40:51.620` (string) - Datum poslední změny hesla zákazníka
++ loginName: `johndoe` (string) - Alternativní přihlašovací jméno, pokud nevyplněno, pouižíva se eMail
 
 ## Můj košík (object)
 
@@ -744,17 +613,17 @@ Založí záznam o registraci nového zákazníka
 + `basketId`: `b4a51104-15a6-4aa7-bb87-808f7f188286` (string, required) 
 + `items`: `[]` (array[string], required) 
 + `createTime`: `5/21/2018 9:05:11 PM` (string, required) 
-+ `selectedDeliveryType` (string, required, nullable) 
++ `selectedDeliveryType`: '1' (string, required, nullable) 
 + `isGift`: `false` (boolean, required) 
-+ `giftMessage` (string, required, nullable) 
-+ `billingAddress` (string, required, nullable) 
-+ `paymentInstrument` (string, required, nullable) 
-+ `confirmationUrl` (string, required, nullable) 
-+ `email` (string, required, nullable) 
-+ `shippingEmail` (string, required, nullable) 
-+ `shippingAddress` (string, required, nullable) 
-+ `cardId` (string, required, nullable) 
-+ `coupons` (string, required, nullable) 
++ `giftMessage`: null (string, required, nullable) 
++ `billingAddress`: null (string, required, nullable) 
++ `paymentInstrument`: null (string, required, nullable) 
++ `confirmationUrl`: null (string, required, nullable) 
++ `email`: null (string, required, nullable) 
++ `shippingEmail`: null (string, required, nullable) 
++ `shippingAddress`: null (string, required, nullable) 
++ `cardId`: null (string, required, nullable) 
++ `coupons`: null (string, required, nullable) 
 + `saveAddress`: `false` (boolean, required) 
 + `vat`: `0` (number, required) 
 + `totalPrice`: `0` (number, required) 
