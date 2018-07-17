@@ -1,7 +1,7 @@
 FORMAT: 1A
 HOST: http://example.com/api
 
-# Klientská zóna
+# Wardeneta - Klientská zóna v1
 
 API Blueprint klientské zóny systému Wardeneta.
 
@@ -382,22 +382,39 @@ Vrátí obsah souboru
 ## GDPR příznaky [/v1/gdpr-states]
 
 ### Seznam GDPR požadavků [GET]
-TODO: Add Description
+Vrátí seznam položek, které jsou zákazníkovi nabídnty k odsouhlasení během prvního přihlášení. 
+Na základě odpovědí na ně, jsou pak u zákazníka povolenz anebo nepovolenz určité služby a operace
+s nimi spojené. Provozovatel systému může měnit nabídku těchto položek.
 
 + Request 
     + Headers
 
             Accept:application/json
-
-
+            Authorization: Bearer Abcd123456....
 
 
 + Response 200 (application/json)
-    + Attributes (array[Seznam GDPR požadavků])
 
+    + Attributes (array[Seznam GDPR požadavků])
     + Body
 
-            [{"stateName":"GDPR příznak 1","stateDesc":"Použití e-mailovcé adresy v aplikaci","stateId":1},{"stateName":"GDPR příznak 2","stateDesc":"Použití adresy v aplikaci","stateId":2},{"stateName":"GDPR příznak 3","stateDesc":"Použití telefonního čísla v aplikaci","stateId":3}]
+            [
+                {
+                    "stateName":"GDPR příznak 1",
+                    "stateDesc":"Použití e-mailovcé adresy v aplikaci",
+                    "stateId":1
+                },
+                {
+                    "stateName":"GDPR příznak 2",
+                    "stateDesc":"Použití adresy v aplikaci",
+                    "stateId":2
+                },
+                {
+                    "stateName":"GDPR příznak 3",
+                    "stateDesc":"Použití telefonního čísla v aplikaci",
+                    "stateId":3
+                }
+            ]
 
 
 
