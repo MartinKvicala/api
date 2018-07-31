@@ -36,7 +36,7 @@ Požadavek na vystavení nového tokenu
 
 # Group Nákupní košík
 
-## Správa nákupního košíku [/v1/baskets]
+## Správa nákupního košíku [/api/v1/baskets]
 
 Nákupní košík uchovává aktuální stav prováděného nákupu v e-shopu. 
 
@@ -57,13 +57,16 @@ Vrátí nakupní košík aktuálního zákazníka (dle autentikačního tokenu).
     + Attributes (Můj košík)
 
 
-### Košík dle ID [/v1/baskets/{basketId}]
+### Košík dle ID [GET /api/v1/baskets/{basketId}]
 
 + Parameters
-    + basketId: 'ABCD-...' (string, required) - ID košíku
+    + basketId: `ABCD-...` (string, required) - ID košíku
 
++ Response 200 (application/json)
+        
+    + Attributes (Můj košík)
 
-### Obnovit košík [PUT]
+### Obnovit košík [PUT /api/v1/baskets/{basketId}]
 Umožňuje synchronizovat stav a obsah košíku se serverem. 
 
 + Request (application/json)
@@ -79,16 +82,12 @@ Umožňuje synchronizovat stav a obsah košíku se serverem.
 
     + Attributes (Můj košík)
 
-
-## Baskets Goods By BasketId [/v1/baskets/{basketId}/goods]
-
-+ Parameters
-    + basketId (string, required)
-
-
-### Přidat zboží [PUT]
+### Přidat zboží [PUT /api/v1/baskets/{basketId}/goods]
 Umožňuje přidat 1 nebo více položek zboží do košíku
 
++ Parameters
+    + basketId: `ABCD-...` (string, required) - ID košíku
+    
 + Request (application/json)
     + Headers
 
@@ -105,23 +104,16 @@ Umožňuje přidat 1 nebo více položek zboží do košíku
             {"basketId":"3b8022b3-7ead-4806-9aa1-7e059ae50a28","items":[{"goodsItemItemId":103,"itemId":"52012116-6e9d-4979-98c3-babbb9d526e3","volume":1,"insertDate":"2018-05-14T14:31:58.238+00:00","canChangeVolume":true,"imagePath":"http://127.0.0.1:8000/wardeneta/images/Goods/GoPrVoucher.png","price":100000,"itemType":"goods","itemDesc":"21 - Dárkový poukaz 1000 Kč","totalVat":0,"total":100000,"itemName":"Dárkový poukaz 1000","vat":0}],"createTime":"2018-05-14T14:31:58.109+00:00","selectedDelivery":null,"isGift":false,"giftMessage":null,"billingAddress":null,"paymentInstrument":null,"confirmationUrl":null,"email":null,"shippingEmail":null,"shippingAddress":null,"reductionCode":null,"cardId":null,"coupons":null,"availableDeliveryTypes":[],"totalPrice":100000,"vat":0}
 
 
-
-## V1 Baskets Reservations By BasketId [/v1/baskets/{basketId}/reservations]
-
-+ Parameters
-    + basketId (string, required)
-
-
-### Přidat pronájem [PUT]
+### Přidat pronájem [PUT /api/v1/baskets/{basketId}/reservations]
 Umožňuje přidat 1 nebo více položek zboží do košíku
 
++ Parameters
+    + basketId: `ABCD-...` (string, required) - ID košíku
+    
 + Request (application/json)
     + Headers
 
             Accept:application/json
-
-
-
 
 + Response 200 (application/json)
     + Attributes (Přidat pronájem)
@@ -131,21 +123,11 @@ Umožňuje přidat 1 nebo více položek zboží do košíku
             {"basketId":"3b8022b3-7ead-4806-9aa1-7e059ae50a28","items":[{"reservation":{"areaId":"B762B784-2959-4725-B588-914B2C512307","establishmentId":3,"time":"2018-05-14T16:00:00+00:00","to":"2018-05-14T16:30:00+00:00"},"itemId":"9cc25f4a-16af-42f6-8531-9fb74562f4ce","volume":1,"insertDate":"2018-05-14T14:36:05.9+00:00","canChangeVolume":false,"imagePath":"http://127.0.0.1:8000/wardeneta/images/Goods/GoRent.png","price":26250,"itemType":"reservation","itemDesc":"Vířivka 14.05.2018 18:00-18:30","totalVat":0,"total":26250,"itemName":"Vířivka","vat":0}],"createTime":"2018-05-14T14:36:05.897+00:00","selectedDelivery":null,"isGift":false,"giftMessage":null,"billingAddress":null,"paymentInstrument":null,"confirmationUrl":null,"email":null,"shippingEmail":null,"shippingAddress":null,"reductionCode":null,"cardId":null,"coupons":null,"availableDeliveryTypes":[],"totalPrice":26250,"vat":0}
 
 
-
-## V1 Baskets Coupons By BasketId [/v1/baskets/{basketId}/coupons]
-
-+ Parameters
-    + basketId (string, required)
-
-
-### Přidat kupón [PUT]
+### Přidat kupón [PUT /api/v1/baskets/{basketId}/coupons]
 Přidá ke košíku slevový kupón. Slevový kupón snižuje celkovou cenu košíku.
 
 
-
 #### Tělo zprávy
-
-
 
 | Název atributu | Popis | Typ |
 
@@ -157,8 +139,6 @@ Přidá ke košíku slevový kupón. Slevový kupón snižuje celkovou cenu koš
 
 
 
-#### Objekt kupón
-
 
 
 | Název atributu | Popis | Typ |
@@ -169,8 +149,8 @@ Přidá ke košíku slevový kupón. Slevový kupón snižuje celkovou cenu koš
 
 
 
-#### HTTP kódy odpovědi
 
+#### HTTP kódy
 
 
 | Kód | Význam |
@@ -186,21 +166,21 @@ Přidá ke košíku slevový kupón. Slevový kupón snižuje celkovou cenu koš
 | 409 | Nesouhlas ID košíku v URL a ve zprávě |
 
 
-
 #### Odpověď
 
 
-
 Objekt **košíku** podle popisu viz [Datové typy](#datove-typy)
+
++ Parameters
+    + basketId: `ABCD-...` (string, required) - ID košíku
 
 + Request (application/json)
     + Headers
 
             Accept:application/json
 
-
-+ Response 200 
-
++ Response 200 (application/json)
+    + Attributes (Přidat pronájem)   
 
 
 
@@ -305,7 +285,7 @@ TODO: Add Description
 
 # Group Pronájmy
 
-## V1 My Institutions Establishments Occupancies [/v1/my/institutions/establishments/{establishmentId}/occupancies/{occupancyDate}]
+## Obsazenost daného provozu [/v1/my/institutions/establishments/{establishmentId}/occupancies/{occupancyDate}]
 
 + Parameters
 
@@ -314,7 +294,8 @@ TODO: Add Description
 
 
 ### Obsazenost provozu [GET]
-TODO: Add Description
+Vrací obsazenost daného provozu v daný den. V rámci dne se může vyskytovat několik druhů aktivit/stavů,
+případně může být provoz uzavřen. Provoz se dělí do zón.
 
 + Request (application/json)
     + Headers
@@ -829,29 +810,64 @@ Založí záznam o registraci nového zákazníka
 
 
 ### Properties
-+ `areaId`: `0001E2BB-9A59-483A-AB9F-CB2B070B8F66` (string, required) 
-+ `establishmentId`: `3` (number, required) 
-+ `areaName`: `Dráha 1` (string, required) 
++ `areaId`: `0001E2BB-9A59-483A-AB9F-CB2B070B8F66` (string, required) - ID zóny
++ `establishmentId`: `3` (number, required) - ID provozu
++ `areaName`: `Dráha 1` (string, required) - název zóny
 + `minimalReservationPeriod`: `30` (number, required) 
-+ `activities`: `30` (array[Activity], required) 
+nejkratší doba pronájmu (1 lekce)
++ `activities` (array[Activity], required) 
+seznam aktivit
 
 
 ## Activity (object)
 
-
 ### Properties
-+ `validFrom`: `6/2/2018 10:00:00 PM` (string, required) 
-+ `validTo`: `6/3/2018 4:30:00 AM` (string, required) 
++ `validFrom`: `2018-06-03T06:30:00+02:00` (string, required) 
+čas začátku dané aktivity
++ `validTo`: `2018-06-03T18:00:00+02:00` (string, required) 
+čas konce dané aktivity
 + `isReservable`: `false` (boolean, required) 
 + `isReserved`: `false` (boolean, required) 
 + `isClosed`: `true` (boolean, required) 
 + `isCustomerReservable`: `false` (boolean, required) 
-+ `reservation` (string, required, nullable) 
++ `reservation` (Activity Reservation, optional, nullable) 
 + `price`: `19000` (number, required) 
 
+## Activity Reservation (object)
+
+### Properties
++ `reservationId`: `15649` (number, required)
+ID kurzu
++ `itemNo`: `1`  (number, required)
+ID lekce v rámci kurzu
++ `reservationName`: `Plavecká dráha` (string, optional, nullable)
++ `validFrom`: `2018-06-03T18:00:00+02:00` (string, required)
+čas začátku dané lekce
++ `validTo`: `2018-06-03T18:30:00+02:00` (string, required)
+čas konce dané lekce
++ `price`: `38000` (number, required)
++ `entryPrice`: `0` (number, required)
++ `acceptBooking`: `false` (boolean, required)
++ `activityName`: `null`  (string, optional, nullable)
++ `instructorName`: `null`  (string, optional, nullable)
+jméno instruktora, který povede danou lekci. Múže se lišit od instruktora, ketrý je
+přiřazen pravidlelému běhu pronájmu (záskok)
++ `cardLimit`: `10`  (number, required) - maximální počet účastníků lekce/kurzu
++ `bookedCount`: `0`  (number, required) - počet do lekce/kurzu přihlášených uživatelů
++ `canAddBooking`: `true` (boolean, required)
++ `canRemoveBooking`: `false` (boolean, required)
+příznak, zda se aktální uživatel může z dané lekce odhlásit. Podmínkz pro odhlášení jsou 
+dány organizačními pravidly dané organizace. Odhlásit je možné pouze z lekce, do které je 
+uživatel přihlášen.
++ `isCourse`: `false` (boolean, required)
+příznak, zda se jedná o uzavrřený kurz, tedy pouze pro předem přihlášenou skupinu
+účastníku, či zda se na jednotlivé lekce může pžihlásit jiný uživatel. Do kurzu se 
+uživatel zařadí koupí produktu (kurzovného), který je svázán s daným kurzem.
++ `isMyCourse`: `false` (boolean, required)
+příznak, zda aktuálně přihlášený uživatel je účastníkme uzavřeného kurzu. Má význam pouze pokud 
+atribut isCourse je true
 
 ## Seznam GDPR požadavků (object)
-
 
 ### Properties
 + `stateName`: `GDPR příznak 1` (string, required) 
