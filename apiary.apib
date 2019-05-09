@@ -155,12 +155,13 @@ Přestaví údaje u aktuálního zákazníka
 ## Zákazník s daným ID [/v1/customers/{customer_id}]
 Správa údajů o zákazníkovi s daným identifikátorem. Dostupné pouze s  odpovídajcím oprávněním.
 
++ Parameters
+    + customer_id (number) - ID zákazníka
+
 ### Zobrazit detail [GET]
 Vrátí detail daného zákazníka
 
 + Request
-    + Parameters
-        + customer_id (number) - ID zákazníka
 
     + Headers
 
@@ -174,8 +175,6 @@ Vrátí detail daného zákazníka
 Přestaví údaje u daného zákazníka
 
 + Request (application/json)
-        + Parameters
-            + customer_id (number) - ID zákazníka
 
         + Headers
 
