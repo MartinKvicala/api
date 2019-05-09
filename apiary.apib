@@ -73,15 +73,16 @@ se pak získá autorizační kód potřebný pro [[získání tokenu](#my-anchor
 
 + Response 204
 
-## Získání tokenu [/api/v1/oauth2/token]
+## Správa tokenu [/api/v1/oauth2/token]
 
-Tyto zprávy slouží k získání ([tokenu](#my-anchor-token)).
+Tyto zprávy slouží k správě autentikačních ([tokenu](#my-anchor-token)).
 
-### Použití důvěrných informací [POST]
+### Získání tokenu [POST /api/v1/oauth2/token]
 
 Požadavek na vystavení nového tokenu pomocí metody `client_credentials`
 
 + Request (application/x-www-form-urlencoded; charset=utf-8)
+Použití důvěrných informací, tedy metody `client_credentials`
 
     + Attributes (OAuth grant request)
 
@@ -96,10 +97,9 @@ Požadavek na vystavení nového tokenu pomocí metody `client_credentials`
 + Response 403
 
 <a name="my-anchor-ac"></a>
-### Použití autorizačního kódu [POST]
-Požadavek na vystavení nového tokenu pomocí metody `authorization_code`
 
 + Request (application/x-www-form-urlencoded; charset=utf-8)
+Požadavek na vystavení nového tokenu pomocí metody `authorization_code`
 
     + Attributes (OAuth grant request)
 
@@ -113,6 +113,15 @@ Požadavek na vystavení nového tokenu pomocí metody `authorization_code`
 
 + Response 403
 
+### Zrušení tokenu [DELETE]
+
+Umožňuje zrušit/zneaktivnit existující token.
+
++ Request (application/x-www-form-urlencoded; charset=utf-8)
+
++ Response 200  (application/json)
+
+    + Attributes
 
 # Group Nákupní košík
 
