@@ -46,7 +46,11 @@ služeb v zastoupení vlastníka zdroje.
 
 *Scopes* umožňují dále zjemnit práva k danému zdroji.
 
-## Získání autorizačního kódu [GET /api/v1/auth{?client_id,scope,redirect_uri,state,code_challenge_method,code_challenge}]
+## Autorizace [/api/v1/auth]
+
+### Získání autorizačního kódu [GET /api/v1/auth{?client_id,scope,redirect_uri,state,code_challenge_method,code_challenge}]
+
++ Request (application/json; charset=utf-8)
 
 + Parameters
   + `client_id` : `1234567890` (string,required) - ID aplikace, pro kterou se má
@@ -57,13 +61,16 @@ služeb v zastoupení vlastníka zdroje.
   + state : `abc878787xz` (string,required) - hodnota, která bude vrácena zpět při vyvolání *redirect_uri*. Klienstká aplikace
   by měla ověřit, že zpět dostala stejnou hodnotu, ktreou poslala.
   + code_challenge_method : `S256` (string,required) - určuje jaká metoda byla použita k získání nasledujícího údaje.
-  Podporováné hodnotz jsou:
+  Podporováné hodnoty jsou:
      + `S256` - SHA256
   + `code_challenge` : `qjrzSW9gMiUgpUvqgEPE4_-8swvyCtfOVvg55o5S_es` (string,required) - digitální hash v BASE64 náhodného textu. Tento text bude součásti požadavku o získání tokenu, viz níže.
 
-## Získání tokenu [POST /api/v1/oauth2/token]
+## Získání tokenu [/api/v1/oauth2/token]
 
-### Použití důvěrných informací k získání tokenu
+Tyto zprávy slouží k získání tokenu.
+
+### Použití důvěrných informací [POST]
+
 Požadavek na vystavení nového tokenu pomocí metody `client_credentials`
 + Request (application/x-www-form-urlencoded; charset=utf-8)
 
@@ -75,7 +82,9 @@ Požadavek na vystavení nového tokenu pomocí metody `client_credentials`
 
     + Attributes (OAuth valid response)
 
-### Použití autorizačního kódu k získání tokenu [POST /api/v1/oauth2/token]
++ Response 403  (application/json)
+
+### Použití autorizačního kódu [POST]
 Požadavek na vystavení nového tokenu pomocí metody `authorization_code`
 + Request (application/x-www-form-urlencoded; charset=utf-8)
 
