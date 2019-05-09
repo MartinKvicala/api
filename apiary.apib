@@ -120,9 +120,38 @@ Umožňuje zrušit/zneaktivnit existující token.
 
 + Request (application/x-www-form-urlencoded; charset=utf-8)
 
-+ Response 200  (application/json)
++ Response 204
 
-    + Attributes
+# Group Zákazník
+
+## Aktuální zákazník [/v1/my/customers]
+Správa údajů o zákazníkovi.
+
+### Zobrazit detail [GET]
+Vrátí detail aktuálního zákazníka
+
++ Request
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
+
++ Response 200 (application/json)
+    + Attributes (Customer1)
+
+### Změnit detail [PUT]
+Přestaví údaje u aktuálního zákazníka
+
++ Request (application/json)
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
+
+    + Attributes (Customer2)
+
++ Response 204
+
 
 # Group Nákupní košík
 
@@ -332,25 +361,6 @@ Odstraní kupón s daným ID ze seznamu slev pro daný košík.
 + Response 400
 
         ID košíku v URL neodpov9d8 ID košíku v těle zpávy
-
-# Group Zákazník
-
-## Aktuální zákazník [/v1/my/customers]
-
-### Aktuální zákazník [GET]
-Vrátí aktuálního zákazníka
-
-+ Request
-    + Headers
-
-            Accept:application/json
-
-
-+ Response 200 (application/json)
-    + Attributes (Customer1)
-
-
-
 
 # Group Zboží
 
@@ -678,7 +688,7 @@ Založí záznam o registraci nového zákazníka
 + `grant_type`: `authorization_code` (string, required)
 + scope: `customer-access` (string, required) - požadovaný přístup
 + code: `1234567890` (string, required) - autorizační kód
-+ client_id: `ABC+ěščřžxy` - ID aplikace
++ client_id: `Abcdef...xyz` - ID aplikace
 + `code_challenge` : `nejaky text` - text k ověření
 
 ## OAuth valid response (object)
@@ -701,6 +711,24 @@ Založí záznam o registraci nového zákazníka
 + birthDate: 19600105 (number) - Datum narození
 + passwordChangeDate: `2015-08-05T08:40:51.620` (string) - Datum poslední změny hesla zákazníka
 + loginName: `johndoe` (string) - Alternativní přihlašovací jméno, pokud nevyplněno, pouižíva se eMail
++ frontTitles : `['Ing.']` (array[string]) - seznam titulů před jménem
++ afterTitles : `['CSc.']`  (array[string]) - seznam titulů za jménem
+
+## Customer2 (object)
+
+### Properties
++ firstName: `John` (string, required) - Jméno
++ lastName: `Doe (string, required) - Příjmení
++ phoneNo: `+420666123456` (string, required) - Základní telefon
++ eMail: `John.Doe@mail.com` (string, required) - Základní email
++ extraOffersOn: false (boolean) - Příznak, zda klient souhlasil s odesíláním zvláštních nabídek
++ lastLoginDate: `2015-08-05T08:40:51.620` (string) - Datum posledního přihlášení zákazníka do klientské zóny
++ createDate: `2015-08-05T08:40:51.620` (string) - Datum založeníní záznamu zákazníka
++ birthDate: 19600105 (number) - Datum narození
++ passwordChangeDate: `2015-08-05T08:40:51.620` (string) - Datum poslední změny hesla zákazníka
++ loginName: `johndoe` (string) - Alternativní přihlašovací jméno, pokud nevyplněno, pouižíva se eMail
++ frontTitles : `['Ing.']` (array[string]) - seznam titulů před jménem
++ afterTitles : `['CSc.']`  (array[string]) - seznam titulů za jménem
 
 ## Basket (object)
 
