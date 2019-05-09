@@ -1,5 +1,5 @@
 FORMAT: 1A
-HOST: http://example.com/api
+HOST: https://zakaznik.kravihora-brno.cz/kzona/sandbox
 
 # Wardeneta - Klientská zóna v1
 
@@ -7,9 +7,10 @@ Popis API klientské zóny systému Wardeneta.
 
 # Group Autentikace a autorizace
 
-Přístup k API vyžaduje autentikaci popsanou níže. Základní podmínou pro autentikaci
-a autorizaci API je použití SSL(HTTPS) mechanismu.
+Pro přístup k API je nutná autentikace pomocí OAuth 2.0 protokolu. Základní podmínou pro správnou
+funkci autentikace a autorizace API je použití šifrovaného kanálu pomocí SSL(HTTPS) mechanismu.
 
+<a name="my-anchor-token"></a>
 ## Token
 
 Autentikační schéma používá `token`, který se předává pomocí HTTP headeru. Obsah tokenu
@@ -27,7 +28,7 @@ Použitý `grant_type` určuje jaký postup vede k získání tokenu. Podporovan
 + *Client credentials*:
 Klient použije své důvěrné informace, např. heslo, k získání tokenu.
 + *Authorization code*:
-Používá se režim přesměrování, kdy kód klienstké stranz (a tedy i důvěrné údaje klienta)
+Používá se režim přesměrování, kdy kód klienstké strany (a tedy i důvěrné údaje klienta)
 zůstávají utajeny, tedy za druhým web serverem.
 
 ## Použitá URL
@@ -39,16 +40,21 @@ Na toto URL je klient přesměrován, když potřebuje autorizovat uživatele. U
 vůči službe a potvrdí požadovaná povolení před přesměrovánim zpět.
 
 + *Tokenové URL*:
-Na tomto URL klient požádá o získání tokenu, který ho autentikuje a autoriyuje ho k použití některých
+Na tomto URL klient požádá o získání tokenu, který ho autentikuje a autorizuje ho k použití některých
 služeb v zastoupení vlastníka zdroje.
 
 ## Scopes
 
 *Scopes* umožňují dále zjemnit práva k danému zdroji.
 
-## Autorizace [/api/v1/auth]
+## Autorizace uživatele [/api/v1/auth]
+
+Slouží k ověření uživatele a povolení přístupu k aplikaci třetí strany.
 
 ### Získání autorizačního kódu [GET /api/v1/auth{?client_id,scope,redirect_uri,state,code_challenge_method,code_challenge}]
+
+Akce vyvolá proces autorizace na autorizačním serveru. Pomocí návratového URL, předanému jako parametr volání
+se pak získá autorizační kód potřebný pro [[získání tokenu](#my-anchor-ac)).
 
 + Request (application/json; charset=utf-8)
 
@@ -67,7 +73,7 @@ služeb v zastoupení vlastníka zdroje.
 
 ## Získání tokenu [/api/v1/oauth2/token]
 
-Tyto zprávy slouží k získání tokenu.
+Tyto zprávy slouží k získání ([tokenu](#my-anchor-token)).
 
 ### Použití důvěrných informací [POST]
 
@@ -84,6 +90,7 @@ Požadavek na vystavení nového tokenu pomocí metody `client_credentials`
 
 + Response 403  (application/json)
 
+<a name="my-anchor-ac"></a>
 ### Použití autorizačního kódu [POST]
 Požadavek na vystavení nového tokenu pomocí metody `authorization_code`
 + Request (application/x-www-form-urlencoded; charset=utf-8)
