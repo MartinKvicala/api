@@ -125,7 +125,7 @@ Umožňuje zrušit/zneaktivnit existující token.
 # Group Zákazník
 
 ## Aktuální zákazník [/v1/my/customers]
-Správa údajů o zákazníkovi.
+Správa údajů o zákazníkovi, který je akuálně přihlašen (vlastní `access_token`).
 
 ### Zobrazit detail [GET]
 Vrátí detail aktuálního zákazníka
@@ -152,6 +152,39 @@ Přestaví údaje u aktuálního zákazníka
 
 + Response 204
 
+## Zákazník s daným ID [/v1/customers/{customer_id}]
+Správa údajů o zákazníkovi s daným identifikátorem. Dostupné pouze s  odpovídajcím oprávněním.
+
+### Zobrazit detail [GET]
+Vrátí detail daného zákazníka
+
++ Request
+    + Parameters
+        + customer_id (number) - ID zákazníka
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
+
++ Response 200 (application/json)
+    + Attributes (Customer1)
+
+### Změnit detail [PUT]
+Přestaví údaje u daného zákazníka
+
++ Request (application/json)
+        + Parameters
+            + customer_id (number) - ID zákazníka
+
+        + Headers
+
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
+
+    + Attributes (Customer2)
+
++ Response 204
 
 # Group Nákupní košík
 
