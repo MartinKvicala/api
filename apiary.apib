@@ -80,6 +80,7 @@ Tyto zprávy slouží k získání ([tokenu](#my-anchor-token)).
 ### Použití důvěrných informací [POST]
 
 Požadavek na vystavení nového tokenu pomocí metody `client_credentials`
+
 + Request (application/x-www-form-urlencoded; charset=utf-8)
 
     + Attributes (OAuth grant request)
@@ -97,15 +98,20 @@ Požadavek na vystavení nového tokenu pomocí metody `client_credentials`
 <a name="my-anchor-ac"></a>
 ### Použití autorizačního kódu [POST]
 Požadavek na vystavení nového tokenu pomocí metody `authorization_code`
+
 + Request (application/x-www-form-urlencoded; charset=utf-8)
 
     + Attributes (OAuth grant request)
+
     + Headers
+
             Authorization: Basic ABCDEF
 
 + Response 200  (application/json)
 
     + Attributes (OAuth valid response)
+
++ Response 403
 
 
 # Group Nákupní košík
