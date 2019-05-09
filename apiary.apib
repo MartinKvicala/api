@@ -1,5 +1,5 @@
 FORMAT: 1A
-HOST: https://zakaznik.kravihora-brno.cz/kzona/wardeneta-api/ra
+HOST: https://zakaznik.kravihora-brno.cz/wardeneta-api/ra
 
 # Wardeneta - Klientská zóna v1
 
@@ -7,8 +7,9 @@ Popis API klientské zóny systému Wardeneta.
 
 # Group Autentikace a autorizace
 
-Pro přístup k API je nutná autentikace pomocí OAuth 2.0 protokolu. Základní podmínou pro správnou
-funkci autentikace a autorizace API je použití šifrovaného kanálu pomocí SSL(HTTPS) mechanismu.
+Pro přístup k API je nutná autentikace pomocí [OAuth 2.0](https://oauth.net/2/) protokolu.
+Základní podmínou pro správnou funkci autentikace a autorizace API je použití šifrovaného kanálu pomocí
+[SSL(HTTPS)](https://tools.ietf.org/html/rfc6101) mechanismu.
 
 <a name="my-anchor-token"></a>
 ## Token
@@ -101,7 +102,7 @@ Použití důvěrných informací, tedy metody `client_credentials`
 <a name="my-anchor-ac"></a>
 Požadavek na vystavení nového tokenu pomocí metody `authorization_code`
 
-    + Attributes (OAuth grant request)
+    + Attributes (OAuth authorization code grant request)
 
     + Headers
 
@@ -671,6 +672,14 @@ Založí záznam o registraci nového zákazníka
 
 + `grant_type`: `client_credentials` (string, required)
 + scope: `customer-access` (string, required)
+
+## OAuth authorization code grant request (object)
+
++ `grant_type`: `authorization_code` (string, required)
++ scope: `customer-access` (string, required) - požadovaný přístup
++ code: `1234567890` (string, required) - autorizační kód
++ client_id: `ABC+ěščřžxy` - ID aplikace
++ `code_challenge` : `nejaky text` - text k ověření
 
 ## OAuth valid response (object)
 
