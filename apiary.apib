@@ -124,7 +124,7 @@ Umožňuje zrušit/zneaktivnit existující token.
 
 # Group Zákazník
 
-## Aktuální zákazník [/v1/my/customers]
+## Aktuální zákazník [/api/v1/customers/myself]
 Správa údajů o zákazníkovi, který je akuálně přihlašen (vlastní `access_token`).
 
 ### Zobrazit detail [GET]
@@ -152,7 +152,7 @@ Přestaví údaje u aktuálního zákazníka
 
 + Response 204
 
-## Zákazník s daným ID [/v1/customers/{customer_id}]
+## Zákazník s daným ID [/api/v1/customers/{customer_id}]
 Správa údajů o zákazníkovi s daným identifikátorem. Dostupné pouze s  odpovídajcím oprávněním.
 
 + Parameters
@@ -184,6 +184,74 @@ Přestaví údaje u daného zákazníka
     + Attributes (Customer2)
 
 + Response 204
+
+# Group Karty
+
+## Karty aktuálního zákazníka [/api/v1/customers/myself/cards]
+Správa údajů o kartách patřících zákazníkovi, který je akuálně přihlašen (vlastní `access_token`).
+
+### Zobrazit seznam [GET /api/v1/customers/myself/cards{?inactive}]
+Vrátí seznam karet aktuálního zákazníka
+
++ Parameters
+    + `inactive` : `true` (boolean,required) - příznak umožňující vrátit v seznamu i neaktivní karty.
+                    Default vrací pouze aktivní.
+
+
++ Request
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
+
++ Response 200 (application/json)
+    + Attributes (Cards)
+
+### Zablokovat [PUT /api/v1/customers/myself/cards/{cardId}/block]
+
++ Parameters
+    + `cardId` : `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string,required) - ID karty, která
+    má být zablokována.
+
++ Request
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
+
++ Response 200 (application/json)
+Karta úspěšně zablokována.
+
+    + Attributes (Card)
+
++ Response 404
+Karta s tímto ID nenalezena.
+
++ Response 409
+Kartu s tímto ID nelze zablokovat.
+
+### Odblokovat [PUT /api/v1/customers/myself/cards/{cardId}/unblock]
+
++ Parameters
+    + `cardId` : `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string,required) - ID karty, která
+    má být odblokována.
+
++ Request
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
+
++ Response 200 (application/json)
+Karta úspěšně odblokována.
+
+    + Attributes (Card)
+
++ Response 404
+Karta s tímto ID nenalezena.
+
++ Response 409
+Kartu s tímto ID nelze odblokovat.
 
 # Group Nákupní košík
 
@@ -1165,3 +1233,23 @@ pro danou organizaci.
 
 ### Properties
 + registrationId: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) - Unikátní ID registrace
+
+## Cards (array[Card])
+
+## Card
+
+### Properties
++ `cardId`: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) -  ID karty
++ `aliasName` : `Moje permanentka` (string, optional) - zákazníkovo pojmenování karty
++ `isActive` : `true` (boolean, required) - příznak, zda je daná karta aktivní
++ `isValid` : `true` (boolean, required) - příznak, zda má daná karta nějakou platnou službu
++ `blocked` : `false` (boolean, required) - příznak, zda je daná karta blokována pro použití
++ `canActivate` : `true` (boolean, required) - příznak, zda lze danou kartu aktivovat
++ `canBlock` : `true` (boolean, required) - příznak, zda lze u dané karty zablokovat její používání
++ `canCharge` : `true` (boolean, required) - příznak, zda lze na danou kartu dobít kredit
++ `canAddTicket` : `false` (boolean, required) - příznak, zda je možné k dané kartě dokoupit doplňkový vstup
++ `canMakeElectronicCopy` : `true` (boolean, required) - příznak, zda lze k dané kartě vytvořít e-kartu
++ `validFrom` : `2018-08-06T15:45:10+02:00` (string, required) - začátek platnosti karty
++ `validTo` : `2020-08-06T22:00:00+02:00` (string, required) - konec platnosti karty
++ `customerDisplayedCredit` : `25000` (number, required) - kredit dostupný zákazníkovi. Může být odlišný od
+  skutečného kreditu. V haléřích.
