@@ -207,11 +207,40 @@ Vrátí seznam karet aktuálního zákazníka
 + Response 200 (application/json)
     + Attributes (Cards)
 
-### Zablokovat [PUT /api/v1/customers/myself/cards/{cardId}/block]
+## Karta podle ID [/api/v1/customers/myself/cards/{cardId}]
+Správa údajů o kartě patřící zákazníkovi, který je akuálně přihlašen (vlastní `access_token`).
 
 + Parameters
-    + `cardId` : `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string,required) - ID karty, která
-    má být zablokována.
+    + `cardId` : `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string,required) - ID karty
+
+### Zobrazit záznam [GET]
+Vrátí seznam karet aktuálního zákazníka
+
++ Request
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
+
++ Response 200 (application/json)
+    + Attributes (Card)
+
+### Upravit údaje [PUT]
+
++ Request
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
+
+    + Attributes (Card change)
+
++ Response 200 (application/json)
+Údaje úspěšně upraveny.
+
+    + Attributes (Card)
+
+### Zablokovat [PUT /api/v1/customers/myself/cards/{cardId}/block]
 
 + Request
     + Headers
@@ -232,10 +261,6 @@ Kartu s tímto ID nelze zablokovat.
 
 ### Odblokovat [PUT /api/v1/customers/myself/cards/{cardId}/unblock]
 
-+ Parameters
-    + `cardId` : `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string,required) - ID karty, která
-    má být odblokována.
-
 + Request
     + Headers
 
@@ -252,6 +277,25 @@ Karta s tímto ID nenalezena.
 
 + Response 409
 Kartu s tímto ID nelze odblokovat.
+
+# Group Návštěvy
+
+## Návštěvy aktuálního zákazníka [/api/v1/customers/myself/visits]
+Informace o návštěvách provedených zákazníkem, který je akuálně přihlašen (vlastní `access_token`),
+anebo na vstupenky jím pořízených.
+
+### Zobrazit seznam [GET]
+Vrátí seznam návštěv aktuálního zákazníka
+
++ Request
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
+
++ Response 200 (application/json)
+    + Attributes (Visits)
+
 
 # Group Nákupní košík
 
@@ -1253,3 +1297,21 @@ pro danou organizaci.
 + `validTo` : `2020-08-06T22:00:00+02:00` (string, required) - konec platnosti karty
 + `customerDisplayedCredit` : `25000` (number, required) - kredit dostupný zákazníkovi. Může být odlišný od
   skutečného kreditu. V haléřích.
+
+## Card change
+
+### Properties
++ `cardId`: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) -  ID karty
++ `aliasName` : `Moje permanentka` (string, optional) - zákazníkovo pojmenování karty
+
+## Visits (array[Visit])
+
+## Visit
+
+### Properties
++ `visitId`: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) -  ID návštěvy
++ `cardId`: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) -  ID karty
++ `totalSum` : `10000` (number, required) - cena návštěvy. V haléřích.
++ `startTime` : `2018-08-09T15:45:10+02:00` (string, required) - začátek návštěvy
++ `endTime` : `2018-08-09T17:4'15:56+02:00` (string, required) - konec návštěvy. Null pokud návštěva
+  ještě probíhá.
