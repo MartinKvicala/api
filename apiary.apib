@@ -329,12 +329,54 @@ Vrátí seznam objednávek aktuálního zákazníka
 + Response 200 (application/json)
     + Attributes (Orders)
 
+## Objednávka dle ID [/api/v1/customers/myself/orders/{orderId}]
+
++ Parameters
+
+    + orderId: `ABCD-...` (string, required) - ID objednávky
+
+### Zobrazit záznam [GET]
+Vrátí objednávku s daným ID aktuálního zákazníka
+
++ Request
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
+
++ Response 200 (application/json)
+    + Attributes (Order)
+
+### Faktura  [GET /api/v1/customers/myself/orders/{orderId}/invoice]
+Vrátí PDF fakturu pro objednávku s daným ID.
+
++ Request
+
+    + Headers
+
+            Authorization: Bearer 874887d6ecd0b106a47448c5beca1
+            Accept: application/pdf
+
++ Response 200 (application/pdf)
+
+### Odeslání  [GET /api/v1/customers/myself/orders/{orderId}/email]
+Odešle obsah objednávky s daným ID na email obejdnávky.
+
++ Request
+
+    + Headers
+
+            Authorization: Bearer 874887d6ecd0b106a47448c5beca1
+
++ Response 204
+
 # Group Nákupní košík
 
-## Správa nákupního košíku [/api/v1/baskets]
+Umožňuje provést online nákup v e-shopu provozovatele. Nákupní košík uchovává aktuální
+stav prováděného nákupu v e-shopu. Zároveň umožňuje
+provedení dalších operací vedoucích k jeho naplnění, nastavení a následnému zaplacení.
 
-Nákupní košík uchovává aktuální stav prováděného nákupu v e-shopu.
-
+## Můj nákupního košíku [/api/v1/baskets]
 
 ### Můj košík [GET]
 
@@ -352,13 +394,15 @@ Vrátí nakupní košík aktuálního zákazníka (dle autentikačního tokenu).
     + Attributes (Basket)
 
 
-### Košík dle ID [GET /api/v1/baskets/{basketId}]
-
-Vrátí nakupní košík s daným ID.
+## Košík dle ID [/api/v1/baskets/{basketId}]
 
 + Parameters
 
     + basketId: `ABCD-...` (string, required) - ID košíku
+
+### Záznam košíku [GET]
+
+Vrátí nakupní košík s daným ID.
 
 + Request
 
@@ -371,25 +415,7 @@ Vrátí nakupní košík s daným ID.
 
     + Attributes (Basket)
 
-
-### Faktura pro košík  [GET /api/v1/baskets/{basketId}/invoice]
-
-Vrátí PDF fakturu pro nakupní košík s daným ID.
-
-+ Parameters
-
-    + basketId: `ABCD-...` (string, required) - ID košíku
-
-+ Request
-
-    + Headers
-
-            Authorization: Bearer 874887d6ecd0b106a47448c5beca1
-            Accept: application/pdf
-
-+ Response 200 (application/pdf)
-
-### Obnovit košík [PUT /api/v1/baskets/{basketId}]
+### Obnovit košík [PUT]
 Umožňuje synchronizovat stav a obsah košíku se serverem.
 
 + Request (application/json)
@@ -408,9 +434,6 @@ Umožňuje synchronizovat stav a obsah košíku se serverem.
 ### Přidat zboží [PUT /api/v1/baskets/{basketId}/goods]
 Umožňuje přidat 1 nebo více položek zboží do košíku
 
-+ Parameters
-    + basketId: `ABCD-...` (string, required) - ID košíku
-
 + Request (application/json)
     + Headers
 
@@ -424,9 +447,6 @@ Umožňuje přidat 1 nebo více položek zboží do košíku
 ### Přidat pronájem [PUT /api/v1/baskets/{basketId}/reservations]
 Umožňuje přidat 1 nebo více položek zboží do košíku
 
-+ Parameters
-    + basketId: `ABCD-...` (string, required) - ID košíku
-
 + Request (application/json)
     + Headers
 
@@ -439,59 +459,20 @@ Umožňuje přidat 1 nebo více položek zboží do košíku
 ### Přidat kupón [PUT /api/v1/baskets/{basketId}/coupons]
 Přidá ke košíku slevový kupón. Slevový kupón snižuje celkovou cenu košíku.
 
-
-#### Tělo zprávy
-
-| Název atributu | Popis | Typ |
-|-------|----------|----|
-| basket | Objekt **košíku** podle popisu viz [Datové typy](#datove-typy) | objekt |
-| coupons | Pole objektů identifikujících kupóny k přidání viz **Objekt kupón** níže  | array |
-
-
-
-
-
-| Název atributu | Popis | Typ |
-|-------|----------|----|
-| couponId | Identifikátor kupónu  | string |
-
-
-
-
-#### HTTP kódy
-
-
-| Kód | Význam |
-|:---:|----------|
-| 200 | OK |
-| 400 | Vadný obsah zprávy |
-| 404 | Platný kupón nenalezen |
-| 409 | Nesouhlas ID košíku v URL a ve zprávě |
-
-#### Odpověď
-
-
-Objekt **košíku** podle popisu viz [Datové typy](#datove-typy)
-
-+ Parameters
-    + basketId: `ABCD-...` (string, required) - ID košíku
-
 + Request (application/json)
     + Headers
 
             Accept:application/json
 
 + Response 200 (application/json)
-    + Attributes (Přidat pronájem)
-
-
+    + Attributes (Přidat kupón)
 
 ## Jednotlivé položky v košíku [/v1/baskets/{basketId}/items/{itemId}]
 
 + Parameters
 
-    + basketId (string, required)
-    + itemId (string, required)
+    + basketId: `ABCD...` (string, required)
+    + itemId: `123` (string, required)
 
 
 ### Odstranit položku z košíku [DELETE]
@@ -505,17 +486,33 @@ Umožňuje odstranit danou položku z nákupního košíku
 
 
 
-+ Response 200
-
-
++ Response 204
 
 
 ## Kupón v košíku [/v1/baskets/{basketId}/coupons/{couponId}]
 
 + Parameters
 
-    + basketId (string, required)
-    + couponId (string, required)
+    + basketId: `ABCD...` (string, required)
+    + couponId: `ABCDEF...` (string, required)
+
+### Info o slevovém kupónu [GET]
+Vrátí kupón s daným ID v rámci košíku.
+
++ Request (application/json)
+
+
++ Response 200 (application/json)
+
+    + Attributes (Basket)
+
++ Response 404
+
+        Kupón s daným ID není přiřazen mezi slevami pro daný košík
+
++ Response 400
+
+        ID košíku v URL neodpov9d8 ID košíku v těle zpávy
 
 
 ### Odstranit slevový kupón [DELETE]
@@ -538,13 +535,13 @@ Odstraní kupón s daným ID ze seznamu slev pro daný košík.
 
         ID košíku v URL neodpov9d8 ID košíku v těle zpávy
 
-# Group Zboží
+# Group Kupóny
 
 ## Kupón dle ID [/v1/my/institutions/coupons/{couponId}]
 
 + Parameters
 
-    + couponId (string, required)
+    + couponId: `ABCDEF...` (string, required)
 
 ### Kupón podle ID [GET]
 Vrátí informaci o daném slevovém kupónu.
@@ -592,7 +589,7 @@ určují dostupné operace nad danou aktivitou. Aktuálně vyskytující se akti
 ## Pronájem dle ID [/v1/my/institutions/reservations/{reservationId}]
 
 + Parameters
-    + reservationId (string, required)
+    + reservationId: `12345` (string, required)
 
 
 ### Pronájem podle ID [GET]
@@ -615,7 +612,7 @@ Vrátí pronájem s daným ID
 ## Soubor dle ID [/v1/my/institutions/files/{fileId}]
 
 + Parameters
-    + fileId (string, required)
+    + fileId: `123456` (string, required)
 
 
 ### Obsah souboru [GET]
@@ -1354,3 +1351,7 @@ pro danou organizaci.
 
 ### Properties
 + `basketId`: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) -  ID objednávky
+
+## Přidat kupón
+
+### Properties
