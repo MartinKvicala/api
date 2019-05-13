@@ -431,33 +431,22 @@ Umožňuje synchronizovat stav a obsah košíku se serverem.
 
     + Attributes (Basket)
 
-### Přidat zboží [PUT /api/v1/baskets/{basketId}/goods]
-Umožňuje přidat 1 nebo více položek zboží do košíku
+### Přidat položku [PUT /api/v1/baskets/{basketId}/new-items]
+Umožňuje přidat 1 nebo více položek košíku
 
 + Request (application/json)
     + Headers
 
             Accept:application/json
 
+    + Attributes (BasketNewItems)
 
 + Response 200 (application/json)
-    + Attributes (Přidat zboží)
 
+    + Attributes (Basket)
 
-### Přidat pronájem [PUT /api/v1/baskets/{basketId}/reservations]
-Umožňuje přidat 1 nebo více položek zboží do košíku
-
-+ Request (application/json)
-    + Headers
-
-            Accept:application/json
-
-+ Response 200 (application/json)
-    + Attributes (Přidat pronájem)
-
-
-### Přidat kupón [PUT /api/v1/baskets/{basketId}/coupons]
-Přidá ke košíku slevový kupón. Slevový kupón snižuje celkovou cenu košíku.
+### Vysypat košík [DELETE /v1/baskets/{basketId}/items]
+Umožňuje odstranit všechny položky z nákupního košíku
 
 + Request (application/json)
     + Headers
@@ -465,29 +454,38 @@ Přidá ke košíku slevový kupón. Slevový kupón snižuje celkovou cenu koš
             Accept:application/json
 
 + Response 200 (application/json)
-    + Attributes (Přidat kupón)
 
-## Jednotlivé položky v košíku [/v1/baskets/{basketId}/items/{itemId}]
+    + Attributes (Basket)
+
+### Odstranit položku z košíku [DELETE /v1/baskets/{basketId}/items/{itemId}]
+Umožňuje odstranit danou položku z nákupního košíku
 
 + Parameters
 
-    + basketId: `ABCD...` (string, required)
     + itemId: `123` (string, required)
-
-
-### Odstranit položku z košíku [DELETE]
-Umožňuje odstranit danou položku z nákupního košíku
 
 + Request (application/json)
     + Headers
 
             Accept:application/json
 
++ Response 200 (application/json)
 
+    + Attributes (Basket)
 
+### Zaplatit košík [PUT /v1/baskets/{basketId}/payments]
+Umožňuje zaplatit za nákupního košíku
 
-+ Response 204
++ Request (application/json)
+    + Headers
 
+            Accept:application/json
+
+    + Attributes (Basket)
+
++ Response 200 (application/json)
+
+    + Attributes (BasketPayment)
 
 ## Kupón v košíku [/v1/baskets/{basketId}/coupons/{couponId}]
 
@@ -1355,3 +1353,69 @@ pro danou organizaci.
 ## Přidat kupón
 
 ### Properties
+
+## BasketGoodsItem
+
+### Properties
+
++ itemId: `12345` (number, required) - ID zboží
++ `volume`: `1` (number, required) - počet
+
+## BasketChargeItem
+
+### Properties
+
++ cardId: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) - ID karty k nabití
++ `amount`: `1` (number, required) - částka nabití v haléřích
+
+## BasketECardItem
+
+### Properties
+
++ cardId: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) - ID karty
+k vytvoření e-karty
+
+## BasketReservationItem
+
+### Properties
+
++ `removeFlag` : `false` (boolean, required) - příznak pro zrušení rezervace
++ `reservationId`: `12345` (number, required) - ID pronájmu
++ `itemNo`: `1` (number, required) - pořadové číslo v rámci pronájmu
++ cardId: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) - ID karty
+
+## BasketCouponItem
+
+### Properties
+
++ couponId: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) - ID kupónu
++ `usableAmount`: `1` (number, required) - využitá částka v haléřích
+
+## BasketRateItem
+
+### Properties
+
++ cardId: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) - ID základní karty
++ `rateId`: `123` (number, required) - ID služby pro doplňkový vstup
+
+
+## BasketNewItems
+
+### Properties
++ basket: (Basket)
++ goods: (array[BasketGoodsItem])
++ charges: (array[BasketChargeItem])
++ ecards: (array[BasketECardItem])
++ reservations: (array[BasketReservationItem])
++ coupons: (array[BasketCouponItem])
++ rate: (array[BasketRateItem])
+
+
+## BasketPayment
+
+### Properties
+
++ redirectUrl: `http://www.example.com/payment` (string, required) - URL pro přesměrováni na platební bránu
++ transId: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) - ID transakce
++ `amount`: `1` (number, required) - částka v haléřích k zaplacení
++ `state`: `CREATED` (string, required) - stav platby
