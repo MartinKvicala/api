@@ -150,7 +150,8 @@ Přestaví údaje u aktuálního zákazníka
 
     + Attributes (Customer2)
 
-+ Response 204
++ Response 200 (application/json)
+    + Attributes (Customer1)
 
 ## Zákazník s daným ID [/api/v1/customers/{customer_id}]
 Správa údajů o zákazníkovi s daným identifikátorem. Dostupné pouze s  odpovídajcím oprávněním.
@@ -183,7 +184,8 @@ Přestaví údaje u daného zákazníka
 
     + Attributes (Customer2)
 
-+ Response 204
++ Response 200 (application/json)
+    + Attributes (Customer1)
 
 # Group Karty
 
@@ -387,7 +389,6 @@ Vrátí nakupní košík aktuálního zákazníka (dle autentikačního tokenu).
     + Headers
 
             Authorization: Bearer 874887d6ecd0b106a47448c5beca1
-            Accept: application/json
 
 + Response 200 (application/json)
 
@@ -409,7 +410,6 @@ Vrátí nakupní košík s daným ID.
     + Headers
 
             Authorization: Bearer 874887d6ecd0b106a47448c5beca1
-            Accept: application/json
 
 + Response 200 (application/json)
 
@@ -423,11 +423,10 @@ Umožňuje synchronizovat stav a obsah košíku se serverem.
     + Headers
 
             Authorization: Bearer 874887d6ecd0b106a47448c5beca1
-            Accept:application/json
 
     + Attributes (Obnova košíkuRequest)
 
-+ Response 200
++ Response 200 (application/json)
 
     + Attributes (Basket)
 
@@ -437,7 +436,7 @@ Umožňuje přidat 1 nebo více položek košíku
 + Request (application/json)
     + Headers
 
-            Accept:application/json
+            Authorization: Bearer 874887d6ecd0b106a47448c5beca1
 
     + Attributes (BasketNewItems)
 
@@ -451,7 +450,7 @@ Umožňuje odstranit všechny položky z nákupního košíku
 + Request (application/json)
     + Headers
 
-            Accept:application/json
+            Authorization: Bearer 874887d6ecd0b106a47448c5beca1
 
 + Response 200 (application/json)
 
@@ -869,40 +868,53 @@ Založí záznam o registraci nového zákazníka
 + `expires_in`: 300 (number, required)
 + `token_type`: Bearer (string, required)
 
+## CustomerTitle (object)
+
+### Properties
++ `title`: `Ing.` (string, required) - titul
+
+## CustomerAfterTitle (object)
+
+### Properties
++ `title`: `CSc.` (string, required) - titul
+
 ## Customer1 (object)
 
 ### Properties
++ customerId: 123456 (number, required) - ID zákazníka
 + firstName: `John` (string, required) - Jméno
-+ lastName: `Doe (string, required) - Příjmení
-+ phoneNo: `+420666123456` (string, required) - Základní telefon
-+ eMail: `John.Doe@mail.com` (string, required) - Základní email
++ lastName: `Doe` (string, required) - Příjmení
++ phoneNo: `+420666123456` (string, required, nullable) - Základní telefon
++ eMail: `John.Doe@mail.com` (string, required, nullable) - Základní email
 + extraOffersOn: false (boolean) - Příznak, zda klient souhlasil s odesíláním zvláštních nabídek
-+ lastLoginDate: `2015-08-05T08:40:51.620` (string) - Datum posledního přihlášení zákazníka do klientské zóny
-+ createDate: `2015-08-05T08:40:51.620` (string) - Datum založeníní záznamu zákazníka
-+ birthDate: 19600105 (number) - Datum narození
-+ passwordChangeDate: `2015-08-05T08:40:51.620` (string) - Datum poslední změny hesla zákazníka
-+ loginName: `johndoe` (string) - Alternativní přihlašovací jméno, pokud nevyplněno, pouižíva se eMail
-+ frontTitles : `['Ing.']` (array[string]) - seznam titulů před jménem
-+ afterTitles : `['CSc.']`  (array[string]) - seznam titulů za jménem
++ lastLoginDate: `2015-08-05T08:40:51` (string, nullable) - Datum posledního přihlášení zákazníka do klientské zóny
++ createDate: `2015-08-05T08:40:51` (string) - Datum založeníní záznamu zákazníka
++ birthDate: 19600105 (number, nullable) - Datum narození
++ passwordChangeDate: `2015-08-05T08:40:51` (string, nullable) - Datum poslední změny hesla zákazníka
++ loginName: `johndoe` (string, nullable) - Alternativní přihlašovací jméno, pokud nevyplněno, pouižíva se eMail
 
 ## Customer2 (object)
 
 ### Properties
++ customerId: 123456 (number, required) - ID zákazníka
 + firstName: `John` (string, required) - Jméno
-+ lastName: `Doe (string, required) - Příjmení
++ lastName: `Doe` (string, required) - Příjmení
 + phoneNo: `+420666123456` (string, required) - Základní telefon
 + eMail: `John.Doe@mail.com` (string, required) - Základní email
 + extraOffersOn: false (boolean) - Příznak, zda klient souhlasil s odesíláním zvláštních nabídek
-+ lastLoginDate: `2015-08-05T08:40:51.620` (string) - Datum posledního přihlášení zákazníka do klientské zóny
-+ createDate: `2015-08-05T08:40:51.620` (string) - Datum založeníní záznamu zákazníka
++ lastLoginDate: `2015-08-05T08:40:51+02:00` (string) - Datum posledního přihlášení zákazníka do klientské zóny
++ createDate: `2015-08-05T08:40:51+02:00` (string) - Datum založeníní záznamu zákazníka
 + birthDate: 19600105 (number) - Datum narození
-+ passwordChangeDate: `2015-08-05T08:40:51.620` (string) - Datum poslední změny hesla zákazníka
++ passwordChangeDate: `2015-08-05T08:40:51+02:00` (string) - Datum poslední změny hesla zákazníka
 + loginName: `johndoe` (string) - Alternativní přihlašovací jméno, pokud nevyplněno, pouižíva se eMail
-+ frontTitles : `['Ing.']` (array[string]) - seznam titulů před jménem
-+ afterTitles : `['CSc.']`  (array[string]) - seznam titulů za jménem
++ `frontTitles` (array[CustomerTitle]) - seznam titulů před jménem
++ `afterTitles` (array[CustomerAfterTitle]) - seznam titulů za jménem
+
+## BasketCardCredit (object)
+
+### Properties
 
 ## Basket (object)
-
 
 ### Properties
 + `basketId`: `b4a51104-15a6-4aa7-bb87-808f7f188286` (string, required)
@@ -918,15 +930,19 @@ Založí záznam o registraci nového zákazníka
 + `shippingEmail`: null (string, required, nullable)
 + `shippingAddress`: null (string, required, nullable)
 + `cardId`: null (string, required, nullable)
-+ `coupons`: null (string, required, nullable)
++ `coupons`: `[]` (array[BasketCoupon], optional, nullable) - Seznam elektronických kupónů, dodaných v rámci košíku
 + `saveAddress`: `false` (boolean, required)
-+ `vat`: `0` (number, required)
 + `totalPrice`: `0` (number, required)
++ `totalPriceToPay`: `0` (number, required)
++ `fullTotalPrice`: `0` (number, required)
++ `deliveryPrice`: `0` (number, required)
++ `vat`: `0` (number, required)
 + `availableDeliveryTypes`: `[]` (array[string], required)
-+ `invoiceNo`: `aaa-bbb-1234` (string, optional) - Číslo fakturyˇ
-+ `shipmentPrice`: `1000` (number, required) - Cena za doručení
-+ `fiscalId`: null (string, optional) - ID pro systém EET
-+ `coupons`: `[]` (array[BasketCoupon], optional) - Seznam elektronických kupónů, dodaných v rámci košíku
++ `totalDiscount`: `0` (number, required)
++ `totalCredit`: `0` (number, required)
++ `cardsTotalCredit`: `[]` (array[BasketCardCredit], optional, nullable)
++ `availableCredit`: `0` (number, required)
++ `necessaryCreditToCharge`: `0` (number, required)
 
 ## BasketCoupon (object)
 
@@ -1001,7 +1017,6 @@ Založí záznam o registraci nového zákazníka
 
 ## Přidat pronájem (object)
 
-
 ### Properties
 + `basketId`: `3b8022b3-7ead-4806-9aa1-7e059ae50a28` (string, required)
 + `items`: `3b8022b3-7ead-4806-9aa1-7e059ae50a28` (array[Item6], required)
@@ -1022,9 +1037,7 @@ Založí záznam o registraci nového zákazníka
 + `totalPrice`: `26250` (number, required)
 + `vat`: `0` (number, required)
 
-
 ## Item6 (object)
-
 
 ### Properties
 + `reservation` (Reservation, required)
@@ -1041,9 +1054,7 @@ Založí záznam o registraci nového zákazníka
 + `itemName`: `Vířivka` (string, required)
 + `vat`: `0` (number, required)
 
-
 ## Reservation (object)
-
 
 ### Properties
 + `areaId`: `B762B784-2959-4725-B588-914B2C512307` (string, required)
@@ -1053,7 +1064,6 @@ Založí záznam o registraci nového zákazníka
 
 
 ## Kupón 30201105 (object)
-
 
 ### Properties
 + `goodsItem` (GoodsItem, required)
@@ -1070,7 +1080,6 @@ Založí záznam o registraci nového zákazníka
 
 ## GoodsItem (object)
 
-
 ### Properties
 + `$type`: `wagoods-items` (string, required)
 + `$id`: `107` (number, required)
@@ -1086,7 +1095,6 @@ Založí záznam o registraci nového zákazníka
 
 
 ## Customer (object)
-
 
 ### Properties
 + `$type`: `wacustomers` (string, required)
@@ -1110,7 +1118,6 @@ Založí záznam o registraci nového zákazníka
 
 
 ## Obsazenost provozu s pronájmem (object)
-
 
 ### Properties
 + `date` : `2018-11-11` (string, required) - datum
@@ -1262,7 +1269,6 @@ pro danou organizaci.
 
 ## AfterTitle (object)
 
-
 ### Properties
 + `title`: `CSc.` (string, required)
 + `titleDesc`: `kandidát věd` (string, required)
@@ -1270,7 +1276,6 @@ pro danou organizaci.
 
 
 ## ContactAddress (object)
-
 
 ### Properties
 + `addressId`: `50f20881-8c70-42bd-9263-da0c9125a58c` (string, required)
@@ -1286,7 +1291,6 @@ pro danou organizaci.
 
 
 ## InvoiceAddress (object)
-
 
 ### Properties
 + `addressId`: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required)
@@ -1311,7 +1315,7 @@ pro danou organizaci.
 
 ### Properties
 + `cardId`: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) -  ID karty
-+ `aliasName` : `Moje permanentka` (string, optional) - zákazníkovo pojmenování karty
++ `aliasName` : `Moje permanentka` (string, optional, nullable) - zákazníkovo pojmenování karty
 + `isActive` : `true` (boolean, required) - příznak, zda je daná karta aktivní
 + `isValid` : `true` (boolean, required) - příznak, zda má daná karta nějakou platnou službu
 + `blocked` : `false` (boolean, required) - příznak, zda je daná karta blokována pro použití
@@ -1402,13 +1406,13 @@ k vytvoření e-karty
 ## BasketNewItems
 
 ### Properties
-+ basket: (Basket)
-+ goods: (array[BasketGoodsItem])
-+ charges: (array[BasketChargeItem])
-+ ecards: (array[BasketECardItem])
-+ reservations: (array[BasketReservationItem])
-+ coupons: (array[BasketCouponItem])
-+ rate: (array[BasketRateItem])
++ basket (Basket)
++ goods (array[BasketGoodsItem])
++ charges (array[BasketChargeItem])
++ ecards (array[BasketECardItem])
++ reservations (array[BasketReservationItem])
++ coupons (array[BasketCouponItem])
++ rate (array[BasketRateItem])
 
 
 ## BasketPayment
