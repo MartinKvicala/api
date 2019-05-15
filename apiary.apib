@@ -177,7 +177,7 @@ Přestaví údaje u daného zákazníka
 
 + Request (application/json)
 
-        + Headers
+    + Headers
 
             Accept: application/json
             Authorization: Bearer ABCDEF...
@@ -229,13 +229,13 @@ Vrátí objekt karty pro dané ID
 
 ### Upravit údaje [PUT]
 
-+ Request
++ Request (application/json)
     + Headers
 
             Accept: application/json
             Authorization: Bearer ABCDEF...
 
-    + Attributes (Card change)
+    + Attributes (CardChange)
 
 + Response 200 (application/json)
 
@@ -334,7 +334,6 @@ Vrátí seznam objednávek aktuálního zákazníka
 ## Objednávka dle ID [/api/v1/customers/myself/orders/{orderId}]
 
 + Parameters
-
     + orderId: `ABCD-...` (string, required) - ID objednávky
 
 ### Zobrazit záznam [GET]
@@ -388,6 +387,7 @@ Vrátí nakupní košík aktuálního zákazníka (dle autentikačního tokenu).
 
     + Headers
 
+            Accept: application/json
             Authorization: Bearer 874887d6ecd0b106a47448c5beca1
 
 + Response 200 (application/json)
@@ -409,6 +409,7 @@ Vrátí nakupní košík s daným ID.
 
     + Headers
 
+            Accept: application/json
             Authorization: Bearer 874887d6ecd0b106a47448c5beca1
 
 + Response 200 (application/json)
@@ -422,9 +423,10 @@ Umožňuje synchronizovat stav a obsah košíku se serverem.
 
     + Headers
 
+            Accept: application/json
             Authorization: Bearer 874887d6ecd0b106a47448c5beca1
 
-    + Attributes (Obnova košíkuRequest)
+    + Attributes (Change Basket)
 
 + Response 200 (application/json)
 
@@ -436,6 +438,7 @@ Umožňuje přidat 1 nebo více položek košíku
 + Request (application/json)
     + Headers
 
+            Accept: application/json
             Authorization: Bearer 874887d6ecd0b106a47448c5beca1
 
     + Attributes (BasketNewItems)
@@ -444,19 +447,7 @@ Umožňuje přidat 1 nebo více položek košíku
 
     + Attributes (Basket)
 
-### Vysypat košík [DELETE /v1/baskets/{basketId}/items]
-Umožňuje odstranit všechny položky z nákupního košíku
-
-+ Request (application/json)
-    + Headers
-
-            Authorization: Bearer 874887d6ecd0b106a47448c5beca1
-
-+ Response 200 (application/json)
-
-    + Attributes (Basket)
-
-### Odstranit položku z košíku [DELETE /v1/baskets/{basketId}/items/{itemId}]
+### Odstranit položku z košíku [DELETE /api/v1/baskets/{basketId}/items/{itemId}]
 Umožňuje odstranit danou položku z nákupního košíku
 
 + Parameters
@@ -464,21 +455,41 @@ Umožňuje odstranit danou položku z nákupního košíku
     + itemId: `123` (string, required)
 
 + Request (application/json)
+
     + Headers
 
             Accept:application/json
+            Authorization: Bearer 874887d6ecd0b106a47448c5beca1
 
 + Response 200 (application/json)
 
     + Attributes (Basket)
 
-### Zaplatit košík [PUT /v1/baskets/{basketId}/payments]
+### Vysypat košík [DELETE /api/v1/baskets/{basketId}/items]
+Umožňuje odstranit všechny položky z nákupního košíku
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer 874887d6ecd0b106a47448c5beca1
+
+    + Attributes (ClearBasket)
+
++ Response 200 (application/json)
+
+    + Attributes (Basket)
+
+### Zaplatit košík [PUT /api/v1/baskets/{basketId}/payments]
 Umožňuje zaplatit za nákupního košíku
 
 + Request (application/json)
+
     + Headers
 
             Accept:application/json
+            Authorization: Bearer 874887d6ecd0b106a47448c5beca1
 
     + Attributes (Basket)
 
@@ -486,39 +497,21 @@ Umožňuje zaplatit za nákupního košíku
 
     + Attributes (BasketPayment)
 
-## Kupón v košíku [/v1/baskets/{basketId}/coupons/{couponId}]
-
+### Odstranit slevový kupón [DELETE /api/v1/baskets/{basketId}/coupons/{couponId}]
 + Parameters
 
-    + basketId: `ABCD...` (string, required)
-    + couponId: `ABCDEF...` (string, required)
+    + couponId: `XYZ...` (string, required)
 
-### Info o slevovém kupónu [GET]
-Vrátí kupón s daným ID v rámci košíku.
-
-+ Request (application/json)
-
-
-+ Response 200 (application/json)
-
-    + Attributes (Basket)
-
-+ Response 404
-
-        Kupón s daným ID není přiřazen mezi slevami pro daný košík
-
-+ Response 400
-
-        ID košíku v URL neodpov9d8 ID košíku v těle zpávy
-
-
-### Odstranit slevový kupón [DELETE]
 Odstraní kupón s daným ID ze seznamu slev pro daný košík.
 
 + Request (application/json)
 
-    + Attributes (Basket)
+    + Headers
 
+            Accept:application/json
+            Authorization: Bearer 874887d6ecd0b106a47448c5beca1
+
+    + Attributes (MinimalBasket)
 
 + Response 200 (application/json)
 
@@ -530,11 +523,11 @@ Odstraní kupón s daným ID ze seznamu slev pro daný košík.
 
 + Response 400
 
-        ID košíku v URL neodpov9d8 ID košíku v těle zpávy
+        ID košíku v URL neodpovídá ID košíku v těle zpávy
 
 # Group Kupóny
 
-## Kupón dle ID [/v1/my/institutions/coupons/{couponId}]
+## Kupón dle ID [/api/v1/my/institutions/coupons/{couponId}]
 
 + Parameters
 
@@ -554,7 +547,7 @@ Vrátí informaci o daném slevovém kupónu.
 
 # Group Pronájmy
 
-## Obsazenost daného provozu [/v1/my/institutions/establishments/{establishmentId}/occupancies/{occupancyDate}/{?days}]
+## Obsazenost daného provozu [/api/v1/my/institutions/establishments/{establishmentId}/occupancies/{occupancyDate}/{?days}]
 
 + Parameters
 
@@ -583,7 +576,7 @@ určují dostupné operace nad danou aktivitou. Aktuálně vyskytující se akti
 
 
 
-## Pronájem dle ID [/v1/my/institutions/reservations/{reservationId}]
+## Pronájem dle ID [/api/v1/my/institutions/reservations/{reservationId}]
 
 + Parameters
     + reservationId: `12345` (string, required)
@@ -606,7 +599,7 @@ Vrátí pronájem s daným ID
 
 # Group Obecné
 
-## Soubor dle ID [/v1/my/institutions/files/{fileId}]
+## Soubor dle ID [/api/v1/my/institutions/files/{fileId}]
 
 + Parameters
     + fileId: `123456` (string, required)
@@ -827,12 +820,18 @@ Založí záznam o registraci nového zákazníka
     + Headers
 
             Accept:application/json
+            Authorization: Bearer xhhgj...
 
     + Attributes
 
 + Response 200 (application/json)
 
-### Seznam registrací [GET]
+### Seznam registrací [GET /api/v1/customer-registrations{?birthdate,surname,firstname}]
++ Parameters
+
+  + birthdate: `19600105` (number, required) - datum narození
+  + surname: `Doe` (string, required) - příjmení
+  + firstname: `John` (string, required) - jméno
 
 + Request (application/json)
 
@@ -887,10 +886,10 @@ Založí záznam o registraci nového zákazníka
 + phoneNo: `+420666123456` (string, required, nullable) - Základní telefon
 + eMail: `John.Doe@mail.com` (string, required, nullable) - Základní email
 + extraOffersOn: false (boolean) - Příznak, zda klient souhlasil s odesíláním zvláštních nabídek
-+ lastLoginDate: `2015-08-05T08:40:51` (string, nullable) - Datum posledního přihlášení zákazníka do klientské zóny
-+ createDate: `2015-08-05T08:40:51` (string) - Datum založeníní záznamu zákazníka
++ lastLoginDate: `2015-08-05T08:40:51+02:00` (string, nullable) - Datum posledního přihlášení zákazníka do klientské zóny
++ createDate: `2015-08-05T08:40:51+02:00` (string) - Datum založeníní záznamu zákazníka
 + birthDate: 19600105 (number, nullable) - Datum narození
-+ passwordChangeDate: `2015-08-05T08:40:51` (string, nullable) - Datum poslední změny hesla zákazníka
++ passwordChangeDate: `2015-08-05T08:40:51+02:00` (string, nullable) - Datum poslední změny hesla zákazníka
 + loginName: `johndoe` (string, nullable) - Alternativní přihlašovací jméno, pokud nevyplněno, pouižíva se eMail
 
 ## Customer2 (object)
@@ -914,74 +913,89 @@ Založí záznam o registraci nového zákazníka
 
 ### Properties
 
-## Basket (object)
+## MinimalBasket (object)
 
 ### Properties
 + `basketId`: `b4a51104-15a6-4aa7-bb87-808f7f188286` (string, required)
-+ `items`: `[]` (array[string], required)
-+ `createTime`: `5/21/2018 9:05:11 PM` (string, required)
-+ `selectedDeliveryType`: '1' (string, required, nullable)
+
+## ClearBasket (MinimalBasket)
+
+### Properties
+
+## Basket (MinimalBasket)
+
+### Properties
++ `items` (array[Item], required)
++ `createTime`: `2018-08-06T15:45:10+02:00` (string, required)
++ `selectedDeliveryType`: '1' (number, required, nullable)
 + `isGift`: `false` (boolean, required)
 + `giftMessage`: null (string, required, nullable)
-+ `billingAddress`: null (string, required, nullable)
++ `billingAddress`: null (BasketAddress, required, nullable)
 + `paymentInstrument`: null (string, required, nullable)
 + `confirmationUrl`: null (string, required, nullable)
 + `email`: null (string, required, nullable)
 + `shippingEmail`: null (string, required, nullable)
-+ `shippingAddress`: null (string, required, nullable)
++ `shippingAddress`: null (BasketAddress, required, nullable)
 + `cardId`: null (string, required, nullable)
-+ `coupons`: `[]` (array[BasketCoupon], optional, nullable) - Seznam elektronických kupónů, dodaných v rámci košíku
++ `coupons` (array[BasketCoupon], optional, nullable) - Seznam elektronických kupónů, dodaných v rámci košíku
 + `saveAddress`: `false` (boolean, required)
 + `totalPrice`: `0` (number, required)
 + `totalPriceToPay`: `0` (number, required)
 + `fullTotalPrice`: `0` (number, required)
 + `deliveryPrice`: `0` (number, required)
 + `vat`: `0` (number, required)
-+ `availableDeliveryTypes`: `[]` (array[string], required)
++ `availableDeliveryTypes` (array[BasketDeliveryType], required)
 + `totalDiscount`: `0` (number, required)
 + `totalCredit`: `0` (number, required)
-+ `cardsTotalCredit`: `[]` (array[BasketCardCredit], optional, nullable)
++ `cardsTotalCredit` (array[BasketCardCredit], optional, nullable)
 + `availableCredit`: `0` (number, required)
 + `necessaryCreditToCharge`: `0` (number, required)
 
 ## BasketCoupon (object)
 
 ### Properties
-+ `couponId`: `xxxxxx-zzzz...` (string, required) - UUID daného kupónu
++ `couponId`: `3b8022b3-7ead-4806-9aa1-7e059ae50a28` (string, required) - UUID daného kupónu
 
-## Obnova košíkuRequest (object)
-
+## BasketDeliveryType (object)
 
 ### Properties
-+ `availableDeliveryTypes`: `{}` (object, required)
-+ `basketId`: `{{basketId}}` (string, required)
-+ `billingAddress` (string, required, nullable)
++ `typeId`: `1` (number, required) - ID způsobu doručení
++ `typeDesc`: `PPL` (string, required) - popis způsobu doručení
++ `isVirtual`: `false` (boolean, required) - příznak elektronického doručení
++ `price`: `10000` (number, required) - cena za doručení
+
+## BasketAddress (object)
+
+### Properties
++ `firstName`: `John` (string, required, nullable) - jméno
++ `lastName`: `Doe` (string, required, nullable) - příjmení
++ `phone`: `+420999123456` (string, required, nullable) - telefon
+
+## Change Basket (MinimalBasket)
+
+### Properties
 + `cardId` (string, required, nullable)
-+ `confirmationUrl` (string, required, nullable)
-+ `coupons` (string, required, nullable)
-+ `createTime`: `5/20/2018 8:19:58 AM` (string, required)
-+ `email` (string, required, nullable)
-+ `giftMessage` (string, required, nullable)
++ `coupons` (array[BasketCouponItem], required, nullable)
++ `createTime`: `2018-08-06T15:45:10+02:00` (string, required)
++ `giftMessage`: null (string, required, nullable)
 + `isGift`: `false` (boolean, required)
-+ `items`: `false` (array[Item], required)
++ `items` (array[Item], required)
 + `paymentInstrument` (string, required, nullable)
-+ `reductionCode` (string, required, nullable)
-+ `reductionCodes`: `{}` (object, required)
-+ `selectedDeliveryType` (string, required, nullable)
-+ `shippingAddress` (string, required, nullable)
-+ `shippingEmail` (string, required, nullable)
-+ `totalPrice`: `200000` (number, required)
-+ `vat`: `0` (number, required)
++ `selectedDeliveryType`: `1` (number, required, nullable)
++ `billingAddress` (BasketAddress, required, nullable)
++ `shippingAddress` (BasketAddress, required, nullable)
++ `email`: `test@test.com` (string, required, nullable)
++ `shippingEmail`: `test@test.com` (string, required, nullable)
++ `saveAddress`: `false` (boolean, required)
 
 
 ## Item (object)
-
 
 ### Properties
 + `canChangeVolume`: `true` (boolean, required)
 + `goodsItemItemId`: `108` (number, required)
 + `imagePath`: `http://127.0.0.1:8000/wardeneta/images/Goods/GoPrVoucher.png` (string, required)
-+ `insertDate`: `5/20/2018 8:20:07 AM` (string, required)
++ `insertDate`: `2018-08-06T15:45:10+02:00` (string, required)
 + `itemDesc`: `22 - Dárkový poukaz 2000 Kč nabití` (string, required)
 + `itemId`: `37a27a72-3180-49e2-8c4d-75137cdd18a6` (string, required)
 + `itemName`: `Dárkový poukaz 2000N` (string, required)
@@ -1002,12 +1016,12 @@ Založí záznam o registraci nového zákazníka
 + `selectedDelivery` (string, required, nullable)
 + `isGift`: `false` (boolean, required)
 + `giftMessage`: null (string, required, nullable)
-+ `billingAddress`: null (string, required, nullable)
++ `billingAddress`: null (BasketAddress, required, nullable)
 + `paymentInstrument`: null (string, required, nullable)
 + `confirmationUrl` (string, required, nullable)
 + `email` (string, required, nullable)
 + `shippingEmail` (string, required, nullable)
-+ `shippingAddress` (string, required, nullable)
++ `shippingAddress` (BasketAddress, required, nullable)
 + `reductionCode` (string, required, nullable)
 + `cardId` (string, required, nullable)
 + `coupons` (string, required, nullable)
@@ -1020,16 +1034,16 @@ Založí záznam o registraci nového zákazníka
 ### Properties
 + `basketId`: `3b8022b3-7ead-4806-9aa1-7e059ae50a28` (string, required)
 + `items`: `3b8022b3-7ead-4806-9aa1-7e059ae50a28` (array[Item6], required)
-+ `createTime`: `5/14/2018 2:36:05 PM` (string, required)
++ `createTime`: `2018-08-06T15:45:10+02:00` (string, required)
 + `selectedDelivery` (string, required, nullable)
 + `isGift`: `false` (boolean, required)
 + `giftMessage` (string, required, nullable)
-+ `billingAddress` (string, required, nullable)
++ `billingAddress` (BasketAddress, required, nullable)
 + `paymentInstrument` (string, required, nullable)
 + `confirmationUrl` (string, required, nullable)
 + `email` (string, required, nullable)
 + `shippingEmail` (string, required, nullable)
-+ `shippingAddress` (string, required, nullable)
++ `shippingAddress` (BasketAddress, required, nullable)
 + `reductionCode` (string, required, nullable)
 + `cardId` (string, required, nullable)
 + `coupons` (string, required, nullable)
@@ -1043,7 +1057,7 @@ Založí záznam o registraci nového zákazníka
 + `reservation` (Reservation, required)
 + `itemId`: `9cc25f4a-16af-42f6-8531-9fb74562f4ce` (string, required)
 + `volume`: `1` (number, required)
-+ `insertDate`: `5/14/2018 2:36:05 PM` (string, required)
++ `insertDate`: `2018-08-06T15:45:10+02:00` (string, required)
 + `canChangeVolume`: `false` (boolean, required)
 + `imagePath`: `http://127.0.0.1:8000/wardeneta/images/Goods/GoRent.png` (string, required)
 + `price`: `26250` (number, required)
@@ -1059,16 +1073,16 @@ Založí záznam o registraci nového zákazníka
 ### Properties
 + `areaId`: `B762B784-2959-4725-B588-914B2C512307` (string, required)
 + `establishmentId`: `3` (number, required)
-+ `time`: `5/14/2018 4:00:00 PM` (string, required)
-+ `to`: `5/14/2018 4:30:00 PM` (string, required)
++ `time`: `2018-08-06T15:45:10+02:00` (string, required)
++ `to`: `2018-08-06T15:45:10+02:00` (string, required)
 
 
 ## Kupón 30201105 (object)
 
 ### Properties
 + `goodsItem` (GoodsItem, required)
-+ `createTime`: `5/22/2018 12:12:43 PM` (string, required)
-+ `expirationTime`: `8/20/2018 12:12:43 PM` (string, required)
++ `createTime`: `2018-08-06T15:45:10+02:00` (string, required)
++ `expirationTime`: `2018-08-06T15:45:10+02:00` (string, required)
 + `useTime` (string, required, nullable)
 + `couponId`: `bfb1e980-b796-4023-adea-292ad92d8bd2` (string, required)
 + `transactions`: `[]` (array[string], required)
@@ -1102,7 +1116,7 @@ Založí záznam o registraci nového zákazníka
 + `passwordChangeDate` (string, required, nullable)
 + `lastName`: `Kobylková` (string, required)
 + `testFlag`: `N` (string, required)
-+ `lastLoginDate`: `5/24/2018 2:47:37 PM` (string, required)
++ `lastLoginDate`: `2018-08-06T15:45:10+02:00` (string, required)
 + `birthDate` (string, required, nullable)
 + `countryId` (string, required, nullable)
 + `customerName` (string, required, nullable)
@@ -1113,7 +1127,7 @@ Založí záznam o registraci nového zákazníka
 + `loginName` (string, required, nullable)
 + `customerId`: `1878` (number, required)
 + `position` (string, required, nullable)
-+ `createDate`: `11/12/2015 1:37:46 PM` (string, required)
++ `createDate`: `2018-08-06T15:45:10+02:00` (string, required)
 + `status`: `true` (boolean, required)
 
 
@@ -1235,8 +1249,8 @@ pro danou organizaci.
 + `eMail`: `martin.kvicala@icloud.com` (string, required)
 + `idKey` (string, required, nullable)
 + `extraOffersOn`: `false` (boolean, required)
-+ `lastLoginDate`: `7/7/2018 9:44:52 AM` (string, required)
-+ `createDate`: `11/12/2015 12:37:46 PM` (string, required)
++ `lastLoginDate`: `2018-08-06T15:45:10+02:00` (string, required)
++ `createDate`: `2018-08-06T15:45:10+02:00` (string, required)
 + `birthDate` (string, required, nullable)
 + `passwordChangeDate` (string, required, nullable)
 + `friendlyComposedName`: `Martina Kobylková` (string, required)
@@ -1311,7 +1325,7 @@ pro danou organizaci.
 
 ## Cards (array[Card])
 
-## Card
+## Card (object)
 
 ### Properties
 + `cardId`: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) -  ID karty
@@ -1329,15 +1343,15 @@ pro danou organizaci.
 + `customerDisplayedCredit` : `25000` (number, required) - kredit dostupný zákazníkovi. Může být odlišný od
   skutečného kreditu. V haléřích.
 
-## Card change
+## CardChange (object)
 
 ### Properties
 + `cardId`: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) -  ID karty
-+ `aliasName` : `Moje permanentka` (string, optional) - zákazníkovo pojmenování karty
++ `aliasName`: `Moje permanentka` (string, optional, nullable) - zákazníkovo pojmenování karty
 
 ## Visits (array[Visit])
 
-## Visit
+## Visit (object)
 
 ### Properties
 + `visitId`: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) -  ID návštěvy
@@ -1349,7 +1363,7 @@ pro danou organizaci.
 
 ## Orders (array[Order])
 
-## Order
+## Order (object)
 
 ### Properties
 + `basketId`: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) -  ID objednávky
@@ -1358,14 +1372,14 @@ pro danou organizaci.
 
 ### Properties
 
-## BasketGoodsItem
+## BasketGoodsItem (object)
 
 ### Properties
 
 + itemId: `12345` (number, required) - ID zboží
 + `volume`: `1` (number, required) - počet
 
-## BasketChargeItem
+## BasketChargeItem (object)
 
 ### Properties
 
@@ -1388,14 +1402,14 @@ k vytvoření e-karty
 + `itemNo`: `1` (number, required) - pořadové číslo v rámci pronájmu
 + cardId: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) - ID karty
 
-## BasketCouponItem
+## BasketCouponItem (object)
 
 ### Properties
 
 + couponId: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) - ID kupónu
 + `usableAmount`: `1` (number, required) - využitá částka v haléřích
 
-## BasketRateItem
+## BasketRateItem (object)
 
 ### Properties
 
@@ -1403,7 +1417,7 @@ k vytvoření e-karty
 + `rateId`: `123` (number, required) - ID služby pro doplňkový vstup
 
 
-## BasketNewItems
+## BasketNewItems (object)
 
 ### Properties
 + basket (Basket)
@@ -1415,7 +1429,7 @@ k vytvoření e-karty
 + rate (array[BasketRateItem])
 
 
-## BasketPayment
+## BasketPayment (object)
 
 ### Properties
 
@@ -1423,3 +1437,7 @@ k vytvoření e-karty
 + transId: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) - ID transakce
 + `amount`: `1` (number, required) - částka v haléřích k zaplacení
 + `state`: `CREATED` (string, required) - stav platby
+
+## UUID (object)
+
+### Properties
