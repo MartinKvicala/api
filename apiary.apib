@@ -243,6 +243,32 @@ Vrátí objekt karty pro dané ID
 
     + Attributes (Card)
 
+### Odblokovat [PUT /api/v1/customers/myself/cards/{cardId}/unblock]
+
++ Request
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
+
++ Response 200 (application/json)
+
+    Karta úspěšně odblokována.
+
+    + Attributes (Card)
+
++ Response 404
+
+    Karta s tímto ID nenalezena.
+
+    + Body
+
++ Response 409
+
+    Kartu s tímto ID nelze odblokovat.
+
+    + Body
+
 ### Zablokovat [PUT /api/v1/customers/myself/cards/{cardId}/block]
 
 + Request
@@ -267,32 +293,6 @@ Vrátí objekt karty pro dané ID
 + Response 409
 
     Kartu s tímto ID nelze zablokovat.
-
-    + Body
-
-### Odblokovat [PUT /api/v1/customers/myself/cards/{cardId}/unblock]
-
-+ Request
-    + Headers
-
-            Accept: application/json
-            Authorization: Bearer ABCDEF...
-
-+ Response 200 (application/json)
-
-    Karta úspěšně odblokována.
-
-    + Attributes (Card)
-
-+ Response 404
-
-    Karta s tímto ID nenalezena.
-
-    + Body
-
-+ Response 409
-
-    Kartu s tímto ID nelze odblokovat.
 
     + Body
 
@@ -1351,7 +1351,7 @@ pro danou organizaci.
 
 ### Properties
 
-+ cardId: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) - ID karty k nabití
++ card: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) - ID karty k nabití
 + `amount`: `1` (number, required) - částka nabití v haléřích
 
 ## BasketECardItem
@@ -1394,7 +1394,7 @@ k vytvoření e-karty
 + ecards (array[BasketECardItem])
 + reservations (array[BasketReservationItem])
 + coupons (array[BasketCouponItem])
-+ rate (array[BasketRateItem])
++ rates (array[BasketRateItem])
 
 
 ## BasketPayment (object)
