@@ -498,11 +498,11 @@ Umožňuje zaplatit za nákupního košíku
     + Attributes (BasketPayment)
 
 ### Odstranit slevový kupón [DELETE /api/v1/baskets/{basketId}/coupons/{couponId}]
+Odstraní kupón s daným ID ze seznamu slev pro daný košík.
+
 + Parameters
 
-    + couponId: `XYZ...` (string, required)
-
-Odstraní kupón s daným ID ze seznamu slev pro daný košík.
+    + couponId: `XYZ...` (string, required) - ID kupónu, který má být odebrán
 
 + Request (application/json)
 
@@ -537,13 +537,14 @@ Odstraní kupón s daným ID ze seznamu slev pro daný košík.
 Vrátí informaci o daném slevovém kupónu.
 
 + Request
+
     + Headers
 
             Accept:application/json
 
 + Response 200 (application/json)
 
-    + Attributes (Kupón 30201105)
+    + Attributes (Coupon)
 
 # Group Pronájmy
 
@@ -586,16 +587,12 @@ určují dostupné operace nad danou aktivitou. Aktuálně vyskytující se akti
 Vrátí pronájem s daným ID
 
 + Request
+
     + Headers
 
             Accept:application/json
 
-
-
-
 + Response 200
-
-
 
 # Group Obecné
 
@@ -609,18 +606,12 @@ Vrátí pronájem s daným ID
 Vrátí obsah souboru
 
 + Request
+
     + Headers
 
             Accept:application/octet-stream
 
-
-
-
 + Response 200
-
-
-
-
 
 # Group GDPR
 
@@ -640,27 +631,7 @@ s nimi spojené. Provozovatel systému může měnit nabídku těchto položek.
 
 + Response 200 (application/json)
 
-    + Attributes (array[Seznam GDPR požadavků])
-    + Body
-
-            [
-                {
-                    "stateName":"GDPR příznak 1",
-                    "stateDesc":"Použití e-mailovcé adresy v aplikaci",
-                    "stateId":1
-                },
-                {
-                    "stateName":"GDPR příznak 2",
-                    "stateDesc":"Použití adresy v aplikaci",
-                    "stateId":2
-                },
-                {
-                    "stateName":"GDPR příznak 3",
-                    "stateDesc":"Použití telefonního čísla v aplikaci",
-                    "stateId":3
-                }
-            ]
-
+    + Attributes (array[GDPRItem])
 
 ## Moje GDPR příznaky [/api/v1/my/gdpr-states]
 
@@ -668,15 +639,15 @@ s nimi spojené. Provozovatel systému může měnit nabídku těchto položek.
 Vrací nastavení GDPR příznaků aktuálního zákazníka
 
 + Request
+
     + Headers
 
             Accept:application/json
 
 
-
-
 + Response 200 (application/json)
-    + Attributes (array[Stav GDPR příznaků u zákazníka])
+
+    + Attributes (array[GDPRCustomerItem])
 
     + Body
 
@@ -687,12 +658,12 @@ Vrací nastavení GDPR příznaků aktuálního zákazníka
 Nastaví GDPR příznaky u daného zákazníka
 
 + Request (application/json)
+
     + Headers
 
             Accept:application/json
 
-    + Attributes (Nastavení GDPR příznaků zákazníkaRequest)
-
+    + Attributes (array[GDPRCustomerItemRequest])
     + Body
 
             [
@@ -724,8 +695,8 @@ Nastaví GDPR příznaky u daného zákazníka
 
 
 + Response 200 (application/json)
-    + Attributes (Nastavení GDPR příznaků zákazníka)
 
+    + Attributes (GDPRCustomer)
     + Body
 
             {
@@ -822,9 +793,13 @@ Založí záznam o registraci nového zákazníka
             Accept:application/json
             Authorization: Bearer xhhgj...
 
-    + Attributes
+    + Attributes (RegistrationRequest)
 
 + Response 200 (application/json)
+
+    + Attributes (RegistrationResponse)
+
++ Response 404
 
 ### Seznam registrací [GET /api/v1/customer-registrations{?birthdate,surname,firstname}]
 + Parameters
@@ -833,7 +808,7 @@ Založí záznam o registraci nového zákazníka
   + surname: `Doe` (string, required) - příjmení
   + firstname: `John` (string, required) - jméno
 
-+ Request (application/json)
++ Request
 
     + Headers
 
@@ -842,8 +817,7 @@ Založí záznam o registraci nového zákazníka
 
 + Response 200 (application/json)
 
-    + Attributes (array)
-        - (RegistrationResponse)
+    + Attributes (RegistrationResponse)
 
 # Data Structures
 
@@ -1077,7 +1051,7 @@ Založí záznam o registraci nového zákazníka
 + `to`: `2018-08-06T15:45:10+02:00` (string, required)
 
 
-## Kupón 30201105 (object)
+## Coupon (object)
 
 ### Properties
 + `goodsItem` (GoodsItem, required)
@@ -1206,41 +1180,27 @@ pro danou organizaci.
 + `firstCourseDate`: `2018-09-01` (string, optional) - datum první lekce daného kurzu
 + `lastCourseDate`: `2019-01-31` (string, optional) - datum poslední lekce daného kurzu
 
-## Seznam GDPR požadavků (object)
+## GDPRItem (object)
 
 ### Properties
-+ `stateName`: `GDPR příznak 1` (string, required)
-+ `stateDesc`: `Použití e-mailovcé adresy v aplikaci` (string, required)
-+ `stateId`: `1` (number, required)
++ `stateName`: `GDPR příznak 1` (string, required) - název příznaku
++ `stateDesc`: `Použití e-mailovcé adresy v aplikaci` (string, required, nullable) - popis příznaku
++ `stateId`: `1` (number, required) - ID příznaku
 
 
-## Stav GDPR příznaků u zákazníka (object)
-
+## GDPRCustomerItem (object)
 
 ### Properties
-+ `state` (State, required)
++ `state` (GDPRItem, required)
 + `value`: `true` (boolean, required)
 
-
-## State (object)
-
+## GDPRCustomerItemRequest (object)
 
 ### Properties
-+ `stateName`: `GDPR příznak 1` (string, required)
-+ `stateDesc`: `Použití e-mailovcé adresy v aplikaci` (string, required)
-+ `stateId`: `1` (number, required)
-
-
-## Nastavení GDPR příznaků zákazníkaRequest (object)
-
-
-### Properties
-+ `state` (State, required)
++ `state` (GDPRItem, required)
 + `value`: `true` (boolean, required)
 
-
-## Nastavení GDPR příznaků zákazníka (object)
-
+## GDPRCustomer (object)
 
 ### Properties
 + `firstName`: `Martina` (string, required)
@@ -1317,6 +1277,16 @@ pro danou organizaci.
 + `country`: `SK` (string, required)
 + `friendlyComposedAddress`: `ulicka 2, 67890 Místo, CZE` (string, required)
 + `shortFriendlyAddress`: `ulicka 2, Místo` (string, required)
+
+## RegistrationRequest (object)
+
+### Properties
++ registrationId (string, required, nullable) - Unikátní ID registrace
++ backTitles: `CSc.` (string, required, nullable) - tituly za jménem
++ `birthdate`: `19600105` (number, required) - datum narození
++ `deputyBirthdate`: `19600105` (number, required, nullable) - datum narození zástupce
++ `deputyEmail`: `test@test.com` (string, required, nullable) - email narození zástupce
+
 
 ## RegistrationResponse (object)
 
