@@ -94,8 +94,8 @@ Tyto zprávy slouží k správě autentikačních ([tokenu](#my-anchor-token)).
 
 Požadavek na vystavení nového tokenu.
 
-+ Request Důvěrné informace povoleno (application/x-www-form-urlencoded; charset=utf-8)
 <a name="my-anchor-cc"></a>
++ Request Důvěrné informace povoleno (application/x-www-form-urlencoded; charset=utf-8)
 Požadavek na vystavení nového tokenu pomocí metody `client_credentials` za použití důvěrných informací. Pokud autentikaci vyvolává klienstká aplikace, musí tato zajistt bezpečné získání důvěrných informací.
 
     + Attributes (OAuth grant request)
@@ -119,8 +119,8 @@ Požadavek na vystavení nového tokenu pomocí metody `client_credentials` za p
 + Response 403
 
 
-+ Request Autorizační kód povoleno (application/x-www-form-urlencoded; charset=utf-8)
 <a name="my-anchor-ac"></a>
++ Request Autorizační kód povoleno (application/x-www-form-urlencoded; charset=utf-8)
 Požadavek na vystavení nového tokenu pomocí metody `authorization_code`, který
 byl získán z předešlého volání [Získání autorizačního kódu](#my-anchor-gac).
 
@@ -1501,4 +1501,4 @@ ověřovací údaj, viz. OAuth2 s [PKCE](https://oauth.net/2/pkce/). Údaj je so
 ### Properties
 + `authorizationCode`: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required)
 autorizační kód, který bude následně předán externí aplikaci. To pomocí něj vyvolá požadavek na získaní autorizačního
-tokenu podle schematu [*authorization_code*](#my-anchor-ac).
+tokenu podle schematu [authorization_code](#my-anchor-ac).
