@@ -697,6 +697,121 @@ Vrátí obsah souboru
 
 + Response 200
 
+## Návštěvnost [/api/v1/my/institutions/attendences]
+
+Služba umožňuje sledovat aktuální návštěvnost jednotlivých provozů.
+
+###  Seznam všech aktuálních návštěvností [GET]
+
+Vrací seznam objektů s hodnotami návštěvnosti ve všech provozech daného provozovatele systému.
++ Request
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
+
++ Response 200 (application/json)
+
+    + Attributes (Attendemces)
+
+### Aktuální návštěvnost daného provozu [GET /api/v1/institutions/establishments/{establishmentId}/attendences]
+
++ Parameters
+
+    + establishmentId: `2` (number, required) - ID provozu
+
++ Request
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
+
+
++ Response 200 (application/json)
+
+    + Attributes (Attendemce)
+
+
+## Teploty [/api/v1/my/institutions/temperatures]
+
+### Seznam teplot pro všechny měřená čidla [GET]
+
++ Request
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
+
++ Response 200 (application/json)
+
+    + Attributes (Temperatures)
+
+### Teplota pro dané čidlo [GET /api/v1/my/institutions/temperatures/{itemName}]
+
++ Parameters
+
+    + itemName: `TEMP_V_B1` (string, required) - ID čidla
+
++ Request
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
+
++ Response 200 (application/json)
+
+    + Attributes (Temperature)
+
+## Přehled aktivit [/api/v1/my/institutions/time-tables/{date}{?days,locality,esatblishment,area}]
+
+Denní snímek aktivit je přehled stavů v jakých se vyskytuje daná zóna běheme konkretního dne. Zóna může být ve dvou
+základních stavech:
+
+* otevřená
+* zavřená
+
+Otevřená zóna pak může nabývat několika stavů. Tyto stavy popisují, zda je zóna volně dostupná, anebo v ní porbíhá
+předem nahlášená aktivita (**kurz** nebo **lekce**). Rozdíl mezi kurzem a lekcí je v tom, že kurz je otevřen pouze
+pro stálou skupinu účastníků, do lekce se pak účastnící nahlašují jednorázově anebo přicházejí bez nahlášení.
+Obvykle probíhá kurz či lekce v pravidelných intrevalech (např. každé úterý od 16:00 hodin).
+
+Dále je možné omezit zónu pouze pro předem nahlášené aktivity, tedy neumožnit volný vstup zákazníkům do zóny mimo
+tyto aktivity.
+
+Obykle má provoz pravidelnou otvírací dobu, ale je možné celý nebo část provozu _mimořádně_ dočasně uzavřít nebo otevřít,
+např. v případě opravy, závodů, apod. Informace o typu mimořadné situace je možné přenést v rámci snímku
+aktivit.
+
++ Parameters
+    + `date`: `2018-11-11` (date,required) - Datum počátku snímku.
+    + `days`: `7` (number,optional) - Počet dnů pro snímek. Pokdu není uvedeno, vrací snímek pro jeden den.
+        Maximální hodnota je 7 dnů.
+    + `locality`: `2` (number,optional) - ID lokality, pro kterou je plán generován.
+    + `esatblishment`: `5` (number,optional) - ID provozu, pro který je plán generován .
+    + `area`: `2e5a2935-7a9a-4158-b11e-74f1a09ec603` (string,optional) - ID zóny, pro kterou je plán generován.
+
+### Seznam aktivit pro daný den nebo interval dnů [GET]
+
+Služba je určena k zobrazení denního snímku aktivit v daném provozu pro daný den nebo několik dnů. Seznam je
+možné omezit na danou lokalitu, provoz nebo zónu.
+
+
++ Request
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
+
++ Response 200 (application/json)
+
+    + Attributes (TimeTableResponse)
+
+
 # Group GDPR
 
 ## GDPR příznaky [/api/v1/gdpr-states]
@@ -863,13 +978,73 @@ Nastaví GDPR příznaky u daného zákazníka
 
 
 
-# Group Zákaznická registrace
+# Group Registrace členství
+
+Využití některých služeb je podmíněno zařazením evidovaného zákazníka do členského programu. Aby se
+zákazník mohl tyto služby využit, musí vyplnit registrační fomulář. Ten obsahuje jednak obecne údaje,
+např. jméno a příjmení, kontaktní údaje, a potom sadu volitelných otázek, jejichž obsah si určí
+provozovatel dle svých potřeb. Registrační formulář může obsahovat i sekci s podmínkami, které musi
+zákazník odsouhlasit, aby mohl o členství požádat.
+
+Konečný způsob schválení členství je volitelný dle nastavení provozovatele. MÚže se např. vyžadovat
+následný podpis dokumentů.
+
+## Definice registračního formuláře [/api/v1/customer-registration-definitions]
+
+Definice registračního formuláře umožňuje sestavit volitelnou část tohoto formuláře, která vychází
+z potřeb provozovatele. Definice obsahuje seznam vyžadovaných dotazů a povolené možnosti odpovědí
+na ně.
+
+### Seznam definicí  [GET]
+Vrátí seznam definicí, z kterých se sestaví registrační fomulář. Formulář má 2 části
+* otázky - seznam otázek, které musí zákazník vyplnit, aby registrace byla platná
+* texty - seznam informačních textů, odkazů, případně potvrzujících podmínek
+
+Další části definice je seznam povinných polí. Provozovatel může sám rozhodnout, která pole pevné části
+formuláře jsou povinná.
+
++ Request
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
+
++ Response 200 (application/json)
+
+    + Attributes (RegistrationFormDefinition)
+
++ Response 401
 
 ## Registrace [/api/v1/customer-registrations]
+Správa údajů o provedených registracích.
 
+<a name="registration-form" />
 ### Nová registrace [POST]
 
 Založí záznam o registraci nového zákazníka
+
++ Request (application/json)
+
+    + Headers
+
+            Accept:application/json
+
+    + Attributes (RegistrationRequest)
+
++ Response 201 (application/json)
+
+    + Attributes (RegistrationResponse)
+
+### Seznam registrací [GET /api/v1/customer-registrations{?birthdate,surname,firstname}]
+
++ Parameters
+
+  + birthdate: `19600105` (number, required) - datum narození
+  + surname: `Doe` (string, required) - příjmení
+  + firstname: `John` (string, required) - jméno
+
+Vrátí seznam existujících registrací.
 
 + Request (application/json)
     + Headers
@@ -877,31 +1052,29 @@ Založí záznam o registraci nového zákazníka
             Accept:application/json
             Authorization: Bearer xhhgj...
 
-    + Attributes (RegistrationRequest)
-
 + Response 200 (application/json)
 
-    + Attributes (RegistrationResponse)
+    + Attributes (RegistrationResponses)
 
-+ Response 404
+# Group Členství
 
-### Seznam registrací [GET /api/v1/customer-registrations{?birthdate,surname,firstname}]
-+ Parameters
+Členské karty [/api/v1/cards]
+Správa údajů o vydaných členských kartách.
 
-  + birthdate: `19600105` (number, required) - datum narození
-  + surname: `Doe` (string, required) - příjmení
-  + firstname: `John` (string, required) - jméno
+### Seznam karet [GET /api/v1/my/institutions/cards?card-no]
 
-+ Request
+Vrátí seznam existujících členských karet.
 
++ Request (application/json)
     + Headers
 
-            Accept: application/json
+            Accept:application/json
             Authorization: Bearer xhhgj...
+
 
 + Response 200 (application/json)
 
-    + Attributes (RegistrationResponse)
+    + Attributes (Card)
 
 # Group Externí aplikace
 
