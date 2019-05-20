@@ -92,13 +92,13 @@ HTML stránka, na které proběhne vlastní ověření vůči službe.
 
 Tyto zprávy slouží k správě autentikačních ([tokenu](#my-anchor-token)).
 
+<a name="my-anchor-get-token"></a>
+### Získat tokenu [POST /api/v1/oauth2/token]
+Umožňuje získat token.
 
-### Získání tokenu pomocí client_credentials [POST /api/v1/oauth2/token]
++ Request Povoleno heslo (application/x-www-form-urlencoded; charset=utf-8)
 <a name="my-anchor-cc"></a>
-Požadavek na vystavení nového tokenu za pomocí postupu ["Client Credentials Grant"](https://oauth.net/2/grant-types/client-credentials/).
-
-+ Request Povoleno (application/x-www-form-urlencoded; charset=utf-8)
-Požadavek na vystavení nového tokenu pomocí metody `client_credentials` za použití důvěrných informací. Pokud autentikaci vyvolává klienstká aplikace, musí tato zajistt bezpečné získání důvěrných informací.
+Požadavek na vystavení nového tokenu za pomocí postupu ["Client Credentials Grant"](https://oauth.net/2/grant-types/client-credentials/ za použití důvěrných informací. Pokud autentikaci vyvolává klienstká aplikace, musí tato zajistt bezpečné získání důvěrných informací.
 
     + Attributes (OAuth grant request)
 
@@ -110,7 +110,7 @@ Požadavek na vystavení nového tokenu pomocí metody `client_credentials` za p
 
     + Attributes (OAuth valid response)
 
-+ Request Nepovoleno  (application/x-www-form-urlencoded; charset=utf-8)
++ Request Nepovoleno heslo (application/x-www-form-urlencoded; charset=utf-8)
 
     + Attributes (OAuth grant request)
 
@@ -120,14 +120,9 @@ Požadavek na vystavení nového tokenu pomocí metody `client_credentials` za p
 
 + Response 403
 
-
-### Získání tokenu pomocí authorization_code [POST /api/v1/oauth2/token]
++ Request Povoleno kód (application/x-www-form-urlencoded; charset=utf-8)
 <a name="my-anchor-ac"></a>
-Požadavek na vystavení nového tokenu za pomocí postupu ["Authorization Code Grant"](https://oauth.net/2/grant-types/authorization-code/).
-
-+ Request Povoleno (application/x-www-form-urlencoded; charset=utf-8)
-sPožadavek na vystavení nového tokenu pomocí metody `authorization_code`, který
-byl získán z předešlého volání [Získání autorizačního kódu](#my-anchor-gac).
+Požadavek na vystavení nového tokenu za pomocí postupu ["Authorization Code Grant"](https://oauth.net/2/grant-types/authorization-code/). Autorizační kód byl získán z předešlého volání [Získání autorizačního kódu](#my-anchor-gac).
 
     + Attributes (OAuth authorization code grant request)
 
@@ -139,7 +134,7 @@ byl získán z předešlého volání [Získání autorizačního kódu](#my-anc
 
     + Attributes (OAuth authorization code grant request)
 
-+ Request Nepovoleno (application/x-www-form-urlencoded; charset=utf-8)
++ Request Nepovoleno kód (application/x-www-form-urlencoded; charset=utf-8)
 
     + Attributes (OAuth grant request)
 
