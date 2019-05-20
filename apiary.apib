@@ -94,11 +94,12 @@ Tyto zprávy slouží k správě autentikačních ([tokenu](#my-anchor-token)).
 
 <a name="my-anchor-get-token"></a>
 ### Získat token [POST /api/v1/oauth2/token]
-Umožňuje získat token.
+Umožňuje získat token pomocí konkrétního autorizačního postupu.
 
 + Request Povoleno heslo (application/x-www-form-urlencoded; charset=utf-8)
 <a name="my-anchor-cc"></a>
-Požadavek na vystavení nového tokenu za pomocí postupu ["Client Credentials Grant"](https://oauth.net/2/grant-types/client-credentials/ za použití důvěrných informací. Pokud autentikaci vyvolává klienstká aplikace, musí tato zajistt bezpečné získání důvěrných informací.
+Požadavek na vystavení nového tokenu za pomocí postupu [Client Credentials Grant](https://oauth.net/2/grant-types/client-credentials/) za použití důvěrných informací. Pokud autentikaci vyvolává klienstká aplikace, musí tato zajistt bezpečné získání důvěrných informací. Postup je určen pro interní aplikace. Aplikace třetí strany musí
+být certifikována pro použití tohoto postupu. 
 
     + Attributes (OAuth grant request)
 
@@ -122,7 +123,8 @@ Požadavek na vystavení nového tokenu za pomocí postupu ["Client Credentials 
 
 + Request Povoleno kód (application/x-www-form-urlencoded; charset=utf-8)
 <a name="my-anchor-ac"></a>
-Požadavek na vystavení nového tokenu za pomocí postupu ["Authorization Code Grant"](https://oauth.net/2/grant-types/authorization-code/). Autorizační kód byl získán z předešlého volání [Získání autorizačního kódu](#my-anchor-gac).
+Požadavek na vystavení nového tokenu za pomocí postupu [Authorization Code Grant](https://oauth.net/2/grant-types/authorization-code/). Autorizační kód byl získán z předešlého volání [Získání autorizačního kódu](#my-anchor-gac).
+Postup je určen pro použití z aplikace třetí strany.
 
     + Attributes (OAuth authorization code grant request)
 
