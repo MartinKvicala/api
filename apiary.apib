@@ -119,7 +119,7 @@ být certifikována pro použití tohoto postupu.
 
             Authorization: Basic ABCDEF
 
-+ Response 403
++ Response 401
 
 + Request Povoleno kód (application/x-www-form-urlencoded; charset=utf-8)
 <a name="my-anchor-ac"></a>
@@ -134,17 +134,17 @@ Postup je určen pro použití z aplikace třetí strany.
 
 + Response 200 (application/json)
 
-    + Attributes (OAuth authorization code grant request)
+    + Attributes (OAuth valid response)
 
 + Request Nepovoleno kód (application/x-www-form-urlencoded; charset=utf-8)
 
-    + Attributes (OAuth grant request)
+    + Attributes (OAuth authorization code grant request)
 
     + Headers
 
             Authorization: Basic ABCDEF
 
-+ Response 403
++ Response 401
 
 ### Zrušit token [DELETE]
 
@@ -713,9 +713,9 @@ Vrací seznam objektů s hodnotami návštěvnosti ve všech provozech daného p
 
 + Response 200 (application/json)
 
-    + Attributes (Attendemces)
+    + Attributes (Attendences)
 
-### Aktuální návštěvnost daného provozu [GET /api/v1/institutions/establishments/{establishmentId}/attendences]
+### Aktuální návštěvnost daného provozu [GET /api/v1/my/institutions/establishments/{establishmentId}/attendences]
 
 + Parameters
 
@@ -731,7 +731,7 @@ Vrací seznam objektů s hodnotami návštěvnosti ve všech provozech daného p
 
 + Response 200 (application/json)
 
-    + Attributes (Attendemce)
+    + Attributes (Attendence)
 
 
 ## Teploty [/api/v1/my/institutions/temperatures]
@@ -1037,14 +1037,13 @@ Založí záznam o registraci nového zákazníka
     + Attributes (RegistrationResponse)
 
 ### Seznam registrací [GET /api/v1/customer-registrations{?birthdate,surname,firstname}]
+Vrátí seznam existujících registrací.
 
 + Parameters
 
   + birthdate: `19600105` (number, required) - datum narození
   + surname: `Doe` (string, required) - příjmení
   + firstname: `John` (string, required) - jméno
-
-Vrátí seznam existujících registrací.
 
 + Request (application/json)
     + Headers
@@ -1823,7 +1822,7 @@ URL, kam bude přesměrováno po schválení přístupu k aplikaci. Toto URL je 
 příznak aktivity dané aplikace. Neaktivním aplikacím není nadále povolne přístup k datům, a to
 i přesto, že uživatel dříve přístup povolil.
 
-## Attendemce (object)
+## Attendence (object)
 
 ### Properties
 + establishmentId: 2 (number, required) - ID provozu
@@ -1833,9 +1832,9 @@ i přesto, že uživatel dříve přístup povolil.
 + timestamp: `2015-08-05T08:40:51.620Z` (date, required) - čas platnosti uvedených údajů
 + isOpen: true (boolean, required) - příznal, zda je daný provoz aktuálně otevřen
 
-## Attendemces (array)
+## Attendences (array)
 
-- (Attendemce)
+- (Attendence)
 
 ## Temperatures (array)
 
@@ -1925,8 +1924,9 @@ Dostupné tituly je možné získat pomoci ([totoho API](#person-titles))
 ### Properties
 - questions (RegistrationFormQuestions, required) - seznam otázek
 - texts (RegistrationFormTexts, required) - seznam textů
-- requiredFields (RegistrationReqFields, optional) - seznam povinných polí
-- logoUrl: `http://server/url/image.jpg` (string, optional) - URL na volitelné logo zobrazené v horní části formuláře
+- requiredFields (RegistrationReqFields, optional, nullable) - seznam povinných polí
+- logoUrl: `http://server/url/image.jpg` (string, optional, nullable)
+URL na volitelné logo zobrazené v horní části formuláře
 
 ## RegistrationFormQuestions (array[RegistrationFormQuestion])
 ## RegistrationFormTexts (array[RegistrationFormText])
