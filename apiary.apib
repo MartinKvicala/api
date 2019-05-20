@@ -863,9 +863,62 @@ Založí záznam o registraci nového zákazníka
 
 # Group Externí aplikace
 
-## Zákazníkem schválené aplikace [/api/v1/customers/myself/app-approvals]
+API umožnuje přístup k zákaznickým údajům i z dalších aplikací třetích stran. Aplikace musí být
+nakonfigurovány v rámci systému a zákazník musí povolit přístup ke svým datům z dané aplikace.
 
-### Seznam externích aplikací [GET]
+## Definované externí aplikace [/api/v1/approvable-apps]
+
+Umožňuje zkontrolovat, zda daná aplikace je definovaná v rámci systému a je možné ji použít.
+
+### Seznam aplikací [GET]
+Vrátí seznam všech existujícících aplikací třetích stran, které mají nebo měly přístup k  API.
+
++ Request
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer xhhgj...
+
++ Response 200 (application/json)
+
+    + Attributes (array[ApprovableApp])
+
+### Záznam o aplikaci [GET /api/v1/approvable-apps/{appId}]
+Vrátí existujícící aplikaci třetí strany, které má nebo měla přístup k  API, s daným ID.
+
++ Parameters
+
+  + `appId`: `APP-ID-AS-UUID` (string, required) - ID aplikace
+
++ Request OK
+Aplikace s daným ID nalezena.
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer xhhgj...
+
++ Response 200 (application/json)
+
+    + Attributes (ApprovableApp)
+
+
++ Request Nenalezena
+Aplikace s daným ID neexistuje.
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer xhhgj...
+
++ Response 404
+
+
+## Schválené přístupy k aplikacím [/api/v1/customers/myself/app-approvals]
+Umožňuje spravovat přístupy k extrením aplikacím pro aktuálního zákazníka.
+
+### Seznam přístupů k externím aplikacím [GET]
 Vrátí seznam externích aplikací, jejichž použití schválil aktuální zákazník. Požadavek na
 schválení externí aplikace je popsán [zde](#my-anchor-gac). Vyvolá ho externí aplikace, která je tímto požadavkem přesměrována na autorizační server. Po schválení přístupu je pomocí návratového URL
 zákazník vrácen zpět do externí aplikace.
@@ -879,9 +932,9 @@ zákazník vrácen zpět do externí aplikace.
 
 + Response 200 (application/json)
 
-    + Attributes (array[ApprovedApp])
+    + Attributes (array[ApprovedAppResponse])
 
-### Přidat externí aplikaci [POST]
+### Přidat přístup k externí aplikaci [POST]
 Přidá záznam o schválení použitelnosti dané externí aplikace aktuálním zákazníkem.
 
 + Request (application/json)
@@ -896,6 +949,52 @@ Přidá záznam o schválení použitelnosti dané externí aplikace aktuálním
 + Response 200 (application/json)
 
     + Attributes (ApprovedAppResponse)
+
+### Upravit přístup k externí aplikaci [PUT/api/v1/customers/myself/app-approvals/{appId}]
+Změní záznam o schválení použitelnosti dané externí aplikace aktuálním zákazníkem.
+
++ Parameters
+
+  + `appId`: `APP-ID-AS-UUID` (string, required) - ID aplikace
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer xhhgj...
+
+    + Attributes (ApprovedApp)
+
++ Response 200 (application/json)
+
+    + Attributes (ApprovedAppResponse)
+
+
+### Odstranit přístup k externí aplikace [DELETE /api/v1/customers/myself/app-approvals/{appId}]
+Odstraní záznam o schválení použitelnosti dané externí aplikace aktuálním zákazníkem.
+
++ Parameters
+
+  + `appId`: `APP-ID-AS-UUID` (string, required) - ID aplikace
+
++ Request OK
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer xhhgj...
+
++ Response 204
+
++ Request Nenalezena
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer xhhgj...
+
++ Response 404
 
 # Data Structures
 
@@ -1509,3 +1608,17 @@ ověřovací údaj, viz. OAuth2 s [PKCE](https://oauth.net/2/pkce/). Údaj je so
 + `authorizationCode`: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required)
 autorizační kód, který bude následně předán externí aplikaci. To pomocí něj vyvolá požadavek na získaní autorizačního
 tokenu podle schématu [authorization_code](#my-anchor-ac).
++ `scopes`: `customer_access` (string, required) - seznam schválených přístupů, viz OAuth2.
++ `issueTime` : `2020-08-06T22:00:00+02:00` (string, required) - čas vydání povolení
+
+## ApprovableApp
+
+### Properties
++ `appId`: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required) - ID aplikace
++ `appName`: `ID Brno` (string, required) - název aplikace
++ `redirectUri`: `https://www.example.com/redirection` (string, required)
+URL, kam bude přesměrováno po schválení přístupu k aplikaci. Toto URL je součastí autorizačního
+[požadavku](#my-anchor-gac) a je kontrolováno na shodu s tímto údajem.
++ `isActive`: `true` (boolean, required)
+příznak aktivity dané aplikace. Neaktivním aplikacím není nadále povolne přístup k datům, a to
+i přesto, že uživatel dříve přístup povolil.
