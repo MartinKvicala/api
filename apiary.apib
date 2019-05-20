@@ -3,7 +3,7 @@ HOST: https://zakaznik.kravihora-brno.cz/wardeneta-api/ra
 
 # Wardeneta - Klientská zóna v1
 
-Popis API klientské zóny systému Wardeneta.
+Popis API klientské zóny systému Wardeneta verze v1.
 
 # Group Autentikace a autorizace
 
@@ -20,7 +20,7 @@ je znám pouze mezi serverem a klientem.
 ## OAuth 2.0
 
 OAuth 2.0 je autorizační rámec, který poskytuje klientovi omezený přístup k API. Klient
-iniciuje interaktivní proces, který vede k získání povolení pro přístup ke danému zdroji.
+iniciuje interaktivní proces, který vede k získání povolení pro přístup k danému zdroji.
 
 ## Typy (grant type)
 
@@ -34,11 +34,12 @@ zůstávají utajeny, tedy za druhým web serverem.
 
 ## Použitá URL
 
-Pro práci s tokenem se používají tyto urlencoded
+Pro práci s tokenem se používají tyto typy URL
 
 + *Autorizační URL*:
 Na toto URL je klient přesměrován, když potřebuje autorizovat uživatele. Uživatel se autentikuje
-vůči službe a potvrdí požadovaná povolení před přesměrovánim zpět.
+vůči službě a potvrdí povolení pro volající aplikaci k přístupu ke svým datům. Poté je přesměrovánám
+zpět na návartové URL spolu s autorizačním kédem, který následně použije k [získání tokenu](#my-anchor-ac).
 
 + *Tokenové URL*:
 Na tomto URL klient požádá o získání tokenu, který ho autentikuje a autorizuje ho k použití některých
@@ -46,16 +47,23 @@ služeb v zastoupení vlastníka zdroje.
 
 ## Scopes
 
-*Scopes* umožňují dále zjemnit práva k danému zdroji.
+*Scopes* umožňují dále zjemnit práva k danému zdroji. Klientská zóna rozlišuje tyto přístupy:
++ *customer_access*: slouží k přístupu konkrétního uživatele, který může vidět pouze *své* údaje
+a případně obecné číselníky
++ *app_access*: slouží k přístupu z jiné, typicky serverové, důvěryhodné aplikace, obvykle třetí strany.
+Aplikace má přístup k údajům různých zákazníků.
++ *guest_access*: slouží k anonymnímu  přistupu do API. Je určeno hlavně k ověření, že dotaz přícházi
+ z ověřené aplikace, nicméně od neznámého uživatele.
 
 ## Autorizace uživatele [/api/v1/auth]
 
-Slouží k ověření uživatele a povolení přístupu k aplikaci třetí strany.
+Slouží k ověření uživatele a povolení přístupu ze strany aplikaci třetí strany.
 
+<a name="my-anchor-gac"></a>
 ### Získání autorizačního kódu [GET /api/v1/auth{?client_id,scope,redirect_uri,state,code_challenge_method,code_challenge}]
 
 Akce vyvolá proces autorizace na autorizačním serveru. Pomocí návratového URL, předanému jako parametr volání
-se pak získá autorizační kód potřebný pro [[získání tokenu](#my-anchor-ac)).
+se pak získá autorizační kód potřebný pro [získání tokenu](#my-anchor-ac).
 
 + Request (application/json; charset=utf-8)
 
@@ -72,7 +80,11 @@ se pak získá autorizační kód potřebný pro [[získání tokenu](#my-anchor
      + `S256` - SHA256
   + `code_challenge` : `qjrzSW9gMiUgpUvqgEPE4_-8swvyCtfOVvg55o5S_es` (string,required) - digitální hash v BASE64 náhodného textu. Tento text bude součásti požadavku o získání tokenu, viz níže.
 
-+ Response 204
++ Response 200 (text/html)
+HTML stránka, na které proběhne vlastní ověření vůči službe.
+
+
+      + Body
 
 ## Správa tokenu [/api/v1/oauth2/token]
 
@@ -80,11 +92,11 @@ Tyto zprávy slouží k správě autentikačních ([tokenu](#my-anchor-token)).
 
 ### Získání tokenu [POST /api/v1/oauth2/token]
 
-Požadavek na vystavení nového tokenu pomocí metody `client_credentials`
+Požadavek na vystavení nového tokenu.
 
-+ Request (application/x-www-form-urlencoded; charset=utf-8)
++ Request Důvěrné informace povoleno (application/x-www-form-urlencoded; charset=utf-8)
 <a name="my-anchor-cc"></a>
-Použití důvěrných informací, tedy metody `client_credentials`
+Požadavek na vystavení nového tokenu pomocí metody `client_credentials` za použití důvěrných informací. Pokud autentikaci vyvolává klienstká aplikace, musí tato zajistt bezpečné získání důvěrných informací.
 
     + Attributes (OAuth grant request)
 
@@ -92,15 +104,25 @@ Použití důvěrných informací, tedy metody `client_credentials`
 
             Authorization: Basic ABCDEF
 
-+ Response 200  (application/json)
++ Response 200 (application/json)
 
     + Attributes (OAuth valid response)
 
++ Request Nepovoleno heslo  (application/x-www-form-urlencoded; charset=utf-8)
+
+    + Attributes (OAuth grant request)
+
+    + Headers
+
+            Authorization: Basic ABCDEF
+
 + Response 403
 
-+ Request (application/x-www-form-urlencoded; charset=utf-8)
+
++ Request Autorizační kód povoleno (application/x-www-form-urlencoded; charset=utf-8)
 <a name="my-anchor-ac"></a>
-Požadavek na vystavení nového tokenu pomocí metody `authorization_code`
+Požadavek na vystavení nového tokenu pomocí metody `authorization_code`, který
+byl získán z předešlého volání [Získání autorizačního kódu](#my-anchor-gac).
 
     + Attributes (OAuth authorization code grant request)
 
@@ -108,9 +130,17 @@ Požadavek na vystavení nového tokenu pomocí metody `authorization_code`
 
             Authorization: Basic ABCDEF
 
-+ Response 200  (application/json)
++ Response 200 (application/json)
 
-    + Attributes (OAuth valid response)
+    + Attributes (OAuth authorization code grant request)
+
++ Request Nepovoleno kód (application/x-www-form-urlencoded; charset=utf-8)
+
+    + Attributes (OAuth grant request)
+
+    + Headers
+
+            Authorization: Basic ABCDEF
 
 + Response 403
 
@@ -245,7 +275,7 @@ Vrátí objekt karty pro dané ID
 
 ### Odblokovat [PUT /api/v1/customers/myself/cards/{cardId}/unblock]
 
-+ Request
++ Request Úspěšné odblokování
     + Headers
 
             Accept: application/json
@@ -253,25 +283,27 @@ Vrátí objekt karty pro dané ID
 
 + Response 200 (application/json)
 
-    Karta úspěšně odblokována.
-
     + Attributes (Card)
+
++ Request Karta s tímto ID nenalezena
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
 
 + Response 404
 
-    Karta s tímto ID nenalezena.
++ Request Kartu s tímto ID nelze odblokovat
+    + Headers
 
-    + Body
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
 
 + Response 409
-
-    Kartu s tímto ID nelze odblokovat.
-
-    + Body
 
 ### Zablokovat [PUT /api/v1/customers/myself/cards/{cardId}/block]
 
-+ Request
++ Request  Úspěšné zablokování
     + Headers
 
             Accept: application/json
@@ -279,22 +311,25 @@ Vrátí objekt karty pro dané ID
 
 + Response 200 (application/json)
 
-    Karta úspěšně zablokována.
-
     + Attributes (Card)
 
++ Request  Karta s tímto ID nenalezena
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
 
 + Response 404
 
-    Karta s tímto ID nenalezena.
++ Request  Kartu s tímto ID nelze zablokovat
 
-    + Body
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer ABCDEF...
 
 + Response 409
-
-    Kartu s tímto ID nelze zablokovat.
-
-    + Body
 
 # Group Návštěvy
 
@@ -818,6 +853,42 @@ Založí záznam o registraci nového zákazníka
 + Response 200 (application/json)
 
     + Attributes (RegistrationResponse)
+
+# Group Externí aplikace
+
+## Zákazníkem schválené aplikace [/api/v1/customers/myself/app-approvals]
+
+### Seznam externích aplikací [GET]
+Vrátí seznam externích aplikací, jejichž použití schválil aktuální zákazník. Požadavek na
+schválení externí aplikace je popsán [zde](#my-anchor-gac). Vyvolá ho externí aplikace, která je tímto požadavkem přesměrována na autorizační server. Po schválení přístupu je pomocí návratového URL
+zákazník vrácen zpět do externí aplikace.
+
++ Request
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer xhhgj...
+
++ Response 200 (application/json)
+
+    + Attributes (array[ApprovedApp])
+
+### Přidat externí aplikaci [POST]
+Přidá záznam o schválení použitelnosti dané externí aplikace aktuálním zákazníkem.
+
++ Request (application/json)
+
+    + Headers
+
+            Accept: application/json
+            Authorization: Bearer xhhgj...
+
+    + Attributes (ApprovedApp)
+
++ Response 200 (application/json)
+
+    + Attributes (ApprovedAppResponse)
 
 # Data Structures
 
@@ -1406,6 +1477,28 @@ k vytvoření e-karty
 + `amount`: `1` (number, required) - částka v haléřích k zaplacení
 + `state`: `CREATED` (string, required) - stav platby
 
-## UUID (object)
+## ApprovedApp (object)
 
 ### Properties
++ `clientId`: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required)
+ID aplikace. Toto ID je přiděleno aplikaci pře jejím první použitím. Externí aplikace ho předá autorizačnímu serveru
+v rámci [požadavku](#my-anchor-gac) na povolení přístupu.
++ `redirectUri`: `https://www.example.com/redirection` (string, required)
+URL k přesměrování po získání autorizačního kódu. Toto URL je evidováno pro danou aplikaci a v případě nesouladu bude
+žádost odmítnuta. Opět ho předává externí aplikace v rámci sv0ho [požadavku](#my-anchor-gac).
++ `scope`: `customer_access` (string, required)
+požadovaný rozsah přístupu, viz OAuth2. Údaj je součásti původního autorizačního [požadavku](#my-anchor-gac).
++ `codeChallengeMethod`: `S256` (string, required)
+použitá metoda pro tvorbu [PKCE](https://oauth.net/2/pkce/) *codeChallenge* hodnoty. V sou4asn0 dob2 je podoporov pouze
+[SHA-256](https://en.wikipedia.org/wiki/SHA-2) algoritmus. Údaj je součásti původního autorizačního
+[požadavku](#my-anchor-gac).
++ `codeChallenge`: `qjrzSW9gMiUgpUvqgEPE4_-8swvyCtfOVvg55o5S_es`(string, required)
+ověřovací údaj, viz. OAuth2 s [PKCE](https://oauth.net/2/pkce/). Údaj je součásti původního autorizačního
+[požadavku](#my-anchor-gac).
+
+## ApprovedAppResponse (object)
+
+### Properties
++ `authorizationCode`: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required)
+autorizační kód, který bude následně předán externí aplikaci. To pomocí něj vyvolá požadavek na získaní autorizačního
+tokenu podle schematu [*authorization_code*](#my-anchor-ac).
