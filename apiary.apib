@@ -8,14 +8,15 @@ Popis API klientské zóny systému Wardeneta verze v1.
 # Group Autentikace a autorizace
 
 Pro přístup k API je nutná autentikace pomocí [OAuth 2.0](https://oauth.net/2/) protokolu.
-Základní podmínou pro správnou funkci autentikace a autorizace API je použití šifrovaného kanálu pomocí
+Základní podmínkou pro správnou funkci autentikace a autorizace API je použití šifrovaného kanálu pomocí
 [SSL(HTTPS)](https://tools.ietf.org/html/rfc6101) mechanismu.
 
 <a name="my-anchor-token"></a>
 ## Token
 
 Autentikační schéma používá `token`, který se předává pomocí HTTP headeru. Obsah tokenu
-je znám pouze mezi serverem a klientem.
+je znám pouze mezi serverem a klientem. Mimo tohto přístupového tokenu může server v určitých
+případech vydat další token (*refresh_token*) umožňující prodloužení přístupového tokenu.
 
 ## OAuth 2.0
 
@@ -27,10 +28,19 @@ iniciuje interaktivní proces, který vede k získání povolení pro přístup 
 Použitý `grant_type` určuje jaký postup vede k získání tokenu. Podporované typy jsou:
 
 + *Client credentials*:
-Klient použije své důvěrné informace, např. heslo, k získání tokenu.
+Klient, typicky aplikace třetí strany, použije své důvěrné informace, které jsou mu předem bezpečně předány,
+k získání tokenu. Klient je povinen tyto údaje bezpečně uložit a v případě jejich úniku je povinen
+nechat tyto údaje zablokovat a vyžádat si nové.
++ *Password*:
+Slouží k přímému přihlášení  uživatele pomocí svého ID a hesla. Tyto údaje nesmí být nikde uchovány a po
+ukončení procesu autentikace by měly zaniknout v rámci aplikace. Tento typ není povolen aplikacím třetí strany.
+Token získaný tímto způsobem lze prodloužit.
 + *Authorization code*:
 Používá se režim přesměrování, kdy kód klienstké strany (a tedy i důvěrné údaje klienta)
-zůstávají utajeny, tedy za druhým web serverem.
+zůstávají utajeny, tedy za druhým web serverem. V určitých případech je možné takto získaný token
+prodloužit.
++ *Refresh token*:
+Umožňuje prodloužit propadlý token.
 
 ## Použitá URL
 
@@ -39,7 +49,7 @@ Pro práci s tokenem se používají tyto typy URL
 + *Autorizační URL*:
 Na toto URL je klient přesměrován, když potřebuje autorizovat uživatele. Uživatel se autentikuje
 vůči službě a potvrdí povolení pro volající aplikaci k přístupu ke svým datům. Poté je přesměrovánám
-zpět na návartové URL spolu s autorizačním kédem, který následně použije k [získání tokenu](#my-anchor-ac).
+zpět na návartové URL spolu s autorizačním kódem, který následně použije k [získání tokenu](#my-anchor-ac).
 
 + *Tokenové URL*:
 Na tomto URL klient požádá o získání tokenu, který ho autentikuje a autorizuje ho k použití některých
@@ -73,32 +83,31 @@ se pak získá autorizační kód potřebný pro [získání tokenu](#my-anchor-
   + scope :  `app_access` (string,required) - požadované právo pro přístop ke zdroji
   + redirect_uri :  `https://www.example.com/fallback` (string,required) - URL, na které bude uživatel přesměrován po autentikaci. Pro dané
   *client_id* jsou definován apovolené hodnoty tohoto údaje.
-  + state : `abc878787xz` (string,required) - hodnota, která bude vrácena zpět při vyvolání *redirect_uri*. Klienstká aplikace
-  by měla ověřit, že zpět dostala stejnou hodnotu, ktreou poslala.
-  + code_challenge_method : `S256` (string,required) - určuje jaká metoda byla použita k získání nasledujícího údaje.
-  Podporováné hodnoty jsou:
+  + state : `abc878787xz` (string,required)
+  náhodná hodnota generovaná klientskou aplikací, která bude vrácena zpět při vyvolání *redirect_uri*. Klienstká aplikace by měla ověřit, že zpět dostala stejnou hodnotu, kterou poslala na autorizační server.
+  + code_challenge_method : `S256` (string,required)
+  určuje jaká metoda byla použita k získání nasledujícího údaje. Podporováné hodnoty jsou:
      + `S256` - SHA256
-  + `code_challenge` : `qjrzSW9gMiUgpUvqgEPE4_-8swvyCtfOVvg55o5S_es` (string,required) - digitální hash v BASE64 náhodného textu. Tento text bude součásti požadavku o získání tokenu, viz níže.
+  + `code_challenge` : `qjrzSW9gMiUgpUvqgEPE4_-8swvyCtfOVvg55o5S_es` (string,required)
+digitální hash v BASE64 náhodného textu. Tento text bude součásti požadavku o získání tokenu, viz níže.
 
 + Response 200 (text/html)
 HTML stránka, na které proběhne vlastní ověření vůči službe.
 
-
       + Body
-
 
 
 ## Správa tokenu [/api/v1/oauth2/token]
 
-Tyto zprávy slouží k správě autentikačních ([tokenu](#my-anchor-token)).
+Tyto zprávy slouží k získání a správě autentikačních ([tokenů](#my-anchor-token)).
 
 <a name="my-anchor-get-token"></a>
 ### Získat token [POST /api/v1/oauth2/token]
 Umožňuje získat token pomocí konkrétního autorizačního postupu.
 
-+ Request Povoleno heslo (application/x-www-form-urlencoded; charset=utf-8)
++ Request Povoleno credentials (application/x-www-form-urlencoded; charset=utf-8)
 <a name="my-anchor-cc"></a>
-Požadavek na vystavení nového tokenu za pomocí postupu [Client Credentials Grant](https://oauth.net/2/grant-types/client-credentials/) za použití důvěrných informací. Pokud autentikaci vyvolává klienstká aplikace, musí tato zajistt bezpečné získání důvěrných informací. Postup je určen pro interní aplikace. Aplikace třetí strany musí
+Požadavek na vystavení nového tokenu za pomocí postupu [Client Credentials Grant](https://oauth.net/2/grant-types/client-credentials/) za použití důvěrných informací. Pokud autentikaci vyvolává klienstká aplikace, musí tato zajistt bezpečné uložení důvěrných informací. Aplikace třetí strany musí
 být certifikována pro použití tohoto postupu.
 
     + Attributes (OAuth grant request)
@@ -111,9 +120,57 @@ být certifikována pro použití tohoto postupu.
 
     + Attributes (OAuth valid response)
 
-+ Request Nepovoleno heslo (application/x-www-form-urlencoded; charset=utf-8)
++ Request Nepovoleno credentials (application/x-www-form-urlencoded; charset=utf-8)
 
     + Attributes (OAuth grant request)
+
+    + Headers
+
+            Authorization: Basic ABCDEF
+
++ Response 401
+
++ Request Povoleno heslo (application/x-www-form-urlencoded; charset=utf-8)
+<a name="my-anchor-pwd"></a>
+Požadavek na vystavení nového tokenu za pomocí postupu [Password Grant](https://oauth.net/2/grant-types/password/) za použití ID uživatele a hesla. Pokud autentikaci vyvolává klienstká aplikace, musí tato zajistit bezpečné získání důvěrných informací. Postup je určen pro interní aplikace. Aplikace třetí strany nmá k tomuto typu přístup.
+
+    + Attributes (OAuth password request)
+
+    + Headers
+
+            Authorization: Basic ABCDEF
+
++ Response 200 (application/json)
+
+    + Attributes (OAuth password valid response)
+
++ Request Nepovoleno heslo (application/x-www-form-urlencoded; charset=utf-8)
+
+    + Attributes (OAuth password request)
+
+    + Headers
+
+            Authorization: Basic ABCDEF
+
++ Response 401
+
++ Request Povoleno obnova (application/x-www-form-urlencoded; charset=utf-8)
+<a name="my-anchor-rt"></a>
+Požadavek na obnovu tokenu za pomocí postupu [Refresh Token Grant](https://oauth.net/2/grant-types/refresh-token/) za použití údaje k obnově tokenu. Tento údaj musí klientská aplikace velmi bezpeečně uložit  a pokud dojd ek jeho úniku, musí vyvolat akci vedoucí k zneplatnění tokenu..
+
+    + Attributes (OAuth refresh request)
+
+    + Headers
+
+            Authorization: Basic ABCDEF
+
++ Response 200 (application/json)
+
+    + Attributes (OAuth password valid response)
+
++ Request Nepovoleno obnova (application/x-www-form-urlencoded; charset=utf-8)
+
+    + Attributes (OAuth refresh request)
 
     + Headers
 
@@ -455,8 +512,28 @@ Odešle obsah objednávky s daným ID na email obejdnávky.
 
 + Response 204
 
-# Group Nákupní košík
+# Group Zboží
 
+Představuje položky, které je možné vložit do [košíku](#my-anchor-basket).
+
+## Dostupné zboží [/api/v1/my/institutions/sellable-items]
+
+### Seznam [GET]
+
++ Request
+
+    + Headers
+
+            Authorization: Bearer 874887d6ecd0b106a47448c5beca1
+            Accept: application/json
+
++ Response 200 (application/json)
+
+    + Attributes (array[SellableItem])
+
+
+# Group Nákupní košík
+<a name="my-anchor-basket"></a>
 Umožňuje provést online nákup v e-shopu provozovatele. Nákupní košík uchovává aktuální
 stav prováděného nákupu v e-shopu. Zároveň umožňuje
 provedení dalších operací vedoucích k jeho naplnění, nastavení a následnému zaplacení.
@@ -1057,12 +1134,15 @@ Vrátí seznam existujících registrací.
 
 # Group Členství
 
-Členské karty [/api/v1/cards]
+## Členské karty [/api/v1/my/institutions/cards]
 Správa údajů o vydaných členských kartách.
 
-### Seznam karet [GET /api/v1/my/institutions/cards?card-no]
-
+### Seznam karet [GET /api/v1/my/institutions/cards{?card_no}]
 Vrátí seznam existujících členských karet.
+
++ Parameters
+    + `card_no`: `123456` (string, optional) - číslo na kartě
+
 
 + Request (application/json)
     + Headers
@@ -1130,7 +1210,7 @@ Aplikace s daným ID neexistuje.
 
 
 ## Schválené přístupy k aplikacím [/api/v1/customers/myself/app-approvals]
-Umožňuje spravovat přístupy k extrením aplikacím pro aktuálního zákazníka.
+Umožňuje spravovat přístupy k externím aplikacím pro aktuálního zákazníka.
 
 ### Seznam přístupů k externím aplikacím [GET]
 Vrátí seznam externích aplikací, jejichž použití schválil aktuální zákazník. Požadavek na
@@ -1216,16 +1296,45 @@ Odstraní záznam o schválení použitelnosti dané externí aplikace aktuáln�
 
 + `grant_type`: `client_credentials` (string, required)
 + scope: `customer-access` (string, required)
++ client_id: `Abcdef...xyz` (string, optional)
+ID aplikace, pokud není zde musí být v headeru *Authorization*.
++ `client_secret`: `Abcdef...123` (string, optional)
+tajný údaj aplikace, pokud není zde musí být v headeru *Authorization*.
+
+## OAuth password request (object)
+
++ `grant_type`: `password` (string, required)
++ scope: `customer-access` (string, required)
++ `username`: `john.doe` (string, required)
++ `password`: `my-password-123` (string, required)
++ `client_id`: `Abcdef...xyz` (string, optional)
+ID aplikace, nepovinné pro tento typ. Alternativně může být v headeru *Authorization*.
++ `client_secret`: `Abcdef...123` (string, optional)
+tajný údaj aplikace, nepovinné pro tento typ. Alternativně může být v headeru *Authorization*.
+
+
+## OAuth refresh request (object)
+
++ `grant_type`: `refresh_token` (string, required)
++ scope: `customer-access` (string, required)
++ `refresh_token`: `eyJhbGciOiJIUzI1NiJ9.e30.XmNK3GpH3Ys_7wsYBfq4C3M6goz71I7dTgUkuIa5lyQ` (string, required) - refresh token
 
 ## OAuth authorization code grant request (object)
 
 + `grant_type`: `authorization_code` (string, required)
 + scope: `customer-access` (string, required) - požadovaný přístup
 + code: `1234567890` (string, required) - autorizační kód
-+ client_id: `Abcdef...xyz` - ID aplikace
++ client_id: `Abcdef...xyz` (string, optional) - ID aplikace
++ `client_secret`: `Abcdef...123` (string, optional) - tajný údaj aplikace
 + `code_challenge` : `nejaky text` - text k ověření
 
 ## OAuth valid response (object)
+
++ `access_token`: `eyJhbGciOiJIUzI1NiJ9.e30.XmNK3GpH3Ys_7wsYBfq4C3M6goz71I7dTgUkuIa5lyQ` (string, required) - valid token
++ `expires_in`: 300 (number, required)
++ `token_type`: Bearer (string, required)
+
+## OAuth password valid response (object)
 
 + `access_token`: `eyJhbGciOiJIUzI1NiJ9.e30.XmNK3GpH3Ys_7wsYBfq4C3M6goz71I7dTgUkuIa5lyQ` (string, required) - valid token
 + `refresh_token`: `eyJhbGciOiJIUzI1NiJ9.e30.XmNK3GpH3Ys_7wsYBfq4C3M6goz71I7dTgUkuIa5lyQ` (string, required) - refresh token
@@ -1785,7 +1894,7 @@ k vytvoření e-karty
 ## ApprovedApp (object)
 
 ### Properties
-+ `clientId`: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required)
++ `clientId`: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (uuid, required)
 ID aplikace. Toto ID je přiděleno aplikaci pře jejím první použitím. Externí aplikace ho předá autorizačnímu serveru
 v rámci [požadavku](#my-anchor-gac) na povolení přístupu.
 + `redirectUri`: `https://www.example.com/redirection` (string, required)
@@ -1798,13 +1907,13 @@ použitá metoda pro tvorbu [PKCE](https://oauth.net/2/pkce/) *codeChallenge* ho
 [SHA-256](https://en.wikipedia.org/wiki/SHA-2) algoritmus. Údaj je součásti původního autorizačního
 [požadavku](#my-anchor-gac).
 + `codeChallenge`: `qjrzSW9gMiUgpUvqgEPE4_-8swvyCtfOVvg55o5S_es`(string, required)
-ověřovací údaj, viz. OAuth2 s [PKCE](https://oauth.net/2/pkce/). Údaj je součásti původního autorizačního
-[požadavku](#my-anchor-gac).
+ověřovací údaj, viz. [OAuth2 s PKCE](https://oauth.net/2/pkce/). Údaj je součásti úvodního autorizačního
+[požadavku](#my-anchor-gac) z externí aplikace na autorizační server.
 
 ## ApprovedAppResponse (object)
 
 ### Properties
-+ `authorizationCode`: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (string, required)
++ `authorizationCode`: `767c2c52-8779-4d0a-8192-ec8ee3d8209e` (uuid, required)
 autorizační kód, který bude následně předán externí aplikaci. To pomocí něj vyvolá požadavek na získaní autorizačního
 tokenu podle schématu [authorization_code](#my-anchor-ac).
 + `scopes`: `customer_access` (string, required) - seznam schválených přístupů, viz OAuth2.
@@ -2075,3 +2184,10 @@ v poli _reservation_.
 ## date (string)
 
 Datum v ISO tvaru
+
+## SellableItem (object)
+
+### Properties
+- `item` (GoodsItem, required)
+záznam o zboží
+- `itemCount`: `6` (number, required) - počet zboží na skladě k prodeji
